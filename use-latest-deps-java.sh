@@ -1,0 +1,78 @@
+#!/usr/bin/env bash
+
+# Copyright 2016 Google Inc. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+print_usage () {
+  (>&2 echo "Usage:")
+  (>&2 echo "    $0 [-d] repository-name")
+  (>&2 echo "Arguments:")
+  (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
+  (>&2 echo "    repository-name: a repo under the GoogleCloudPlatform org")
+  (>&2 echo "                     with an identically-named fork.")
+}
+
+DRYRUN=0
+while getopts :d opt; do
+  case $opt in
+    d)
+      (>&2 echo "Entered dry-run mode.")
+      DRYRUN=1
+      ;;
+    \?)
+      (>&2 echo "Got invalid option -$OPTARG.")
+      print_usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+if [[ -z $1 ]] ; then
+  (>&2 echo "Missing repo argument.")
+  print_usage
+  exit 1
+fi
+REPO=$1
+
+# Get this script's directory.
+# http://stackoverflow.com/a/246128/101923
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+set -x
+
+mvn versions:use-latest-releases \
+  "-Dmaven.version.rules=file://$DIR/java-repo-tools/versions-rules.xml"
+
+git diff --quiet
+if [[ "$?" -ne 0 ]] ; then
+  if [[ "$DRYRUN" -eq 0 ]] ; then
+    "${DIR}/commit-and-push.sh"
+  fi
+
+  if [[ -e travis.sh ]] ; then
+    ./travis.sh
+  else
+    mvn --batch-mode clean verify
+  fi
+
+  if [[ "$?" -ne 0 ]] ; then
+    (>&2 echo "Tests failed! Not sending PR.")
+    exit 1
+  fi
+
+  if [[ "$DRYRUN" -eq 0 ]] ; then
+    "${DIR}/send-pr.sh" "GoogleCloudPlatform/$REPO"
+  fi
+fi
