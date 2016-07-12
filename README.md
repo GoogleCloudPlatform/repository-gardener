@@ -14,14 +14,15 @@ already cloned to the `~/java-repo-tools` directory.)
 
 ```shell
 source set-env.sh \
+  && git clone https://github.com/GoogleCloudPlatform/java-repo-tools.git
   && ./clone-and-checkout.sh java-docs-samples \
   && ( \
     cd repo-to-update \
-    && ../use-latest-deps-java.sh \
-      -d java-docs-samples \
-      -Dmaven.version.rules=file://$HOME/src/java-repo-tools/versions-rules.xml
+    && ../use-latest-deps-java.sh -d java-docs-samples
  )
 ```
+
+Remove `-d` to actually push and send PR.
 
 ## Contributing changes
 
