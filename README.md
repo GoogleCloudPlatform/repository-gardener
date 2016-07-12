@@ -1,6 +1,6 @@
 # Repository Gardener
 
-[![Build Status](https://travis-ci.org/GoogleCloudPlatform/repo-gardener.svg)](https://travis-ci.org/GoogleCloudPlatform/repo-gardener)
+[![Build Status](https://travis-ci.org/GoogleCloudPlatform/repository-gardener.svg)](https://travis-ci.org/GoogleCloudPlatform/repository-gardener)
 
 The repository gardener maintains code samples by running some automatable
 tasks. For example, it can automatically update dependencies and then after
