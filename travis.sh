@@ -13,6 +13,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export DPEBOT_GIT_USER_NAME="DPE bot"
-export DPEBOT_GIT_USER_EMAIL="bot@example.com"
-export DPEBOT_GITHUB_TOKEN=your-token-here
+set -e
+set -x
+shopt -s globstar
+
+# Check that all shell scripts in this repo (including this one) pass the
+# Shell Check linter.
+shellcheck ./**/*.sh

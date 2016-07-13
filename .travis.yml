@@ -1,4 +1,3 @@
-#!/usr/bin/env bash
 # Copyright 2016 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-export DPEBOT_GIT_USER_NAME="DPE bot"
-export DPEBOT_GIT_USER_EMAIL="bot@example.com"
-export DPEBOT_GITHUB_TOKEN=your-token-here
+language: bash
+addons:
+  apt:
+    sources:
+    # Grab shellcheck from the Debian repo.
+    # https://github.com/koalaman/shellcheck/wiki/TravisCI
+    - debian-sid
+    packages:
+    - shellcheck
+script: ./travis.sh
+branches:
+  only:
+  - master
