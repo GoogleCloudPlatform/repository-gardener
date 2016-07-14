@@ -39,12 +39,12 @@ if [[ -z ${DPEBOT_GITHUB_TOKEN} ]] ; then
   exit 1
 fi
 
-BRANCH=latestdeps$(date +"%Y%m%d%k%M%S")
+BRANCH="repositorygardener$(date +"%Y%m%d")b${RANDOM}"
 
 # TODO: Support other orgs (such as codelabs).
 git clone "https://github.com/GoogleCloudPlatform/${REPO}.git" repo-to-update
 (
-cd repo-to-update
+cd repo-to-update || exit 1
 git config user.name "${DPEBOT_GIT_USER_NAME}"
 git config user.email "${DPEBOT_GIT_USER_EMAIL}"
 git remote add dpebot "https://dpebot:${DPEBOT_GITHUB_TOKEN}@github.com/dpebot/${REPO}.git"
