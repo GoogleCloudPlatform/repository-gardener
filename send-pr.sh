@@ -14,10 +14,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if [[ -z $1 ]] ; then
-  (>&2 echo "Missing repo argument.")
+print_usage() {
   (>&2 echo "Usage:")
   (>&2 echo "    $0 github-user-or-org/repository")
+}
+
+if [[ -z $1 ]] ; then
+  (>&2 echo "Missing repo argument.")
+  print_usage
+  exit 1
+fi
+if [[ "$1" != *"/"* ]] ; then
+  (>&2 echo "Repo argument needs to be of form username/repo-name.")
+  print_usage
   exit 1
 fi
 REPO=$1
@@ -36,7 +45,8 @@ curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "{
 \"title\": \"Auto-update dependencies.\",
-\"head\": \"dpebot:${BRANCH}\",
+\"body\": \"Brought to you by your friendly [Repository Gardener](https://github.com/GoogleCloudPlatform/repository-gardener).\",
+\"head\": \"${BRANCH}\",
 \"base\": \"master\" }" \
   "https://api.github.com/repos/${REPO}/pulls"
 
