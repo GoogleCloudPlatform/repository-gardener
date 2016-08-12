@@ -14,16 +14,44 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+print_usage() {
+  (>&2 echo "Usage:")
+  (>&2 echo "    $0 [-b branch-name] github-user/repository")
+}
+
+
+# Check for optional arguments.
+BRANCH="dpebot-repositorygardener"
+while getopts :b: opt; do
+  case $opt in
+    b)
+      BRANCH=$OPTARG
+      ;;
+    \?)
+      (>&2 echo "Got invalid option -$OPTARG.")
+      print_usage
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND-1))
+
+
+# Check that positional arguments are set.
 if [[ -z $1 ]] ; then
   (>&2 echo "Missing repo argument.")
-  (>&2 echo "Usage:")
-  (>&2 echo "    $0 repository-name")
-  (>&2 echo "Where repository-name is some repo under the GoogleCloudPlatform")
-  (>&2 echo "org with an identically-named fork.")
+  print_usage
+  exit 1
+fi
+if [[ "$1" != *"/"* ]] ; then
+  (>&2 echo "Repo argument needs to be of form username/repo-name.")
+  print_usage
   exit 1
 fi
 REPO=$1
 
+
+# Check that environment variables are set.
 if [[ -z ${DPEBOT_GIT_USER_NAME} ]] ; then
   (>&2 echo "DPEBOT_GIT_USER_NAME environment variable must be set.")
   exit 1
@@ -39,15 +67,12 @@ if [[ -z ${DPEBOT_GITHUB_TOKEN} ]] ; then
   exit 1
 fi
 
-BRANCH="repositorygardener$(date +"%Y%m%d")b${RANDOM}"
 
-# TODO: Support other orgs (such as codelabs).
-git clone "https://github.com/GoogleCloudPlatform/${REPO}.git" repo-to-update
+git clone "https://dpebot:${DPEBOT_GITHUB_TOKEN}@github.com/${REPO}.git" repo-to-update
 (
 cd repo-to-update || exit 1
 git config user.name "${DPEBOT_GIT_USER_NAME}"
 git config user.email "${DPEBOT_GIT_USER_EMAIL}"
-git remote add dpebot "https://dpebot:${DPEBOT_GITHUB_TOKEN}@github.com/dpebot/${REPO}.git"
 
 git branch "$BRANCH" origin/master
 git checkout "$BRANCH"

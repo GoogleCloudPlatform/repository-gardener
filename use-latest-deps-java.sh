@@ -16,13 +16,12 @@
 
 print_usage () {
   (>&2 echo "Usage:")
-  (>&2 echo "    $0 [-d] repository-name")
+  (>&2 echo "    $0 [-d] github-user/repository-name")
   (>&2 echo "Arguments:")
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
-  (>&2 echo "    repository-name: a repo under the GoogleCloudPlatform org")
-  (>&2 echo "                     with an identically-named fork.")
 }
 
+# Check for optional arguments.
 DRYRUN=0
 while getopts :d opt; do
   case $opt in
@@ -39,12 +38,20 @@ while getopts :d opt; do
 done
 shift $((OPTIND-1))
 
+
+# Check that positional arguments are set.
 if [[ -z $1 ]] ; then
   (>&2 echo "Missing repo argument.")
   print_usage
   exit 1
 fi
+if [[ "$1" != *"/"* ]] ; then
+  (>&2 echo "Repo argument needs to be of form username/repo-name.")
+  print_usage
+  exit 1
+fi
 REPO=$1
+
 
 # Get this script's directory.
 # http://stackoverflow.com/a/246128/101923
@@ -73,6 +80,6 @@ if [[ "$?" -ne 0 ]] ; then
   fi
 
   if [[ "$DRYRUN" -eq 0 ]] ; then
-    "${DIR}/send-pr.sh" "GoogleCloudPlatform/$REPO"
+    "${DIR}/send-pr.sh" "$REPO"
   fi
 fi
