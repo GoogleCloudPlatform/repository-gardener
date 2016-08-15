@@ -64,10 +64,6 @@ mvn versions:use-latest-releases \
 
 git diff --quiet
 if [[ "$?" -ne 0 ]] ; then
-  if [[ "$DRYRUN" -eq 0 ]] ; then
-    "${DIR}/commit-and-push.sh"
-  fi
-
   if [[ -e travis.sh ]] ; then
     ./travis.sh
   else
@@ -80,6 +76,7 @@ if [[ "$?" -ne 0 ]] ; then
   fi
 
   if [[ "$DRYRUN" -eq 0 ]] ; then
+    "${DIR}/commit-and-push.sh"
     "${DIR}/send-pr.sh" "$REPO"
   fi
 fi
