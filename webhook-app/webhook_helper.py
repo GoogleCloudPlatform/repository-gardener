@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helpers for implementing github webhooks."""
+"""Helpers for implementing GitHub webhooks."""
 
 from collections import defaultdict
 import hashlib
@@ -43,7 +43,7 @@ _web_hook_event_map = defaultdict(list)
 
 
 def listen(event):
-    """Decorator that registers a github hook function."""
+    """Decorator that registers a GitHub hook function."""
     def inner(f):
         _web_hook_event_map[event].append(f)
         return f
@@ -51,7 +51,7 @@ def listen(event):
 
 
 def process(request):
-    """Calls all of the functions registered for a github event."""
+    """Calls all of the functions registered for a GitHub event."""
     event = request.headers.get('X-GitHub-Event', 'ping')
     functions = _web_hook_event_map[event]
 

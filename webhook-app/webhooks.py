@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """This module contains functions that are called whenever a particular
-github webhook is received."""
+GitHub webhook is received."""
 
 import logging
 

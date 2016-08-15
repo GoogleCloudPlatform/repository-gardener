@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Helpers for interacting with the github API and hook events."""
+"""Helpers for interacting with the GitHub API and hook events."""
 
 import os
 
