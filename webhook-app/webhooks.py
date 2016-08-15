@@ -43,12 +43,18 @@ def check_for_auto_merge_trigger(text):
         if trigger in text:
             return True
 
+    return False
+
 
 @webhook_helper.listen('issue_comment')
 def acknowledge_merge_on_travis(data):
     """When a user comments on a pull request with one of the automerge
     triggers (e.g. merge on green), this hook will add the 'automerge'
-    label."""
+    label.
+
+    Issue comment data reference:
+    https://developer.github.com/v3/activity/events/types/#issuecommentevent
+    """
     if data.get('action') != 'created':
         return
 
@@ -80,7 +86,11 @@ def acknowledge_merge_on_travis(data):
 @webhook_helper.listen('status')
 def complete_merge_on_travis(data):
     """When all statuses on a PR are green, this hook will automatically
-    merge it if it's labeled with 'automerge'."""
+    merge it if it's labeled with 'automerge'.
+
+    Status data reference:
+    https://developer.github.com/v3/activity/events/types/#statusevent
+    """
     # TODO: Idea - if automerge has been triggered and the status fails,
     # nag the committer to fix?
 

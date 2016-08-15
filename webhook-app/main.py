@@ -26,6 +26,7 @@ logging.basicConfig(level=logging.INFO)
 logging.getLogger('github3').setLevel(level=logging.WARNING)
 logging.getLogger('requests').setLevel(level=logging.WARNING)
 logging.getLogger('urllib3').setLevel(level=logging.WARNING)
+logging.getLogger('oauth2client').setLevel(level=logging.WARNING)
 
 runtimeconfig.fetch_and_update_environ('dpebot')
 
