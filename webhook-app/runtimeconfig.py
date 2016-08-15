@@ -87,7 +87,8 @@ def fetch(config_name):
     """Fetch the variables and values for the given config.
 
     Returns a dictionary of variable names to values."""
-    project = gcloud._helpers._determine_default_project()
+    project = gcloud._helpers._bytes_to_unicode(
+        gcloud._helpers._determine_default_project())
 
     logging.info('Fetching runtime configuration {} from {}.'.format(
         config_name, project))

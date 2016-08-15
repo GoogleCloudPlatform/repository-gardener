@@ -36,6 +36,7 @@ def check_for_auto_merge_trigger(text):
 
     triggers = (
         'merge on green',
+        'merge when green',
         'merge when travis passes',
         'LGTM')
 
