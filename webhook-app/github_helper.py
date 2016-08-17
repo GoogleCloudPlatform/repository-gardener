@@ -26,8 +26,13 @@ def github_user():
 
 def get_client():
     """Returns an authenticated github3 client."""
-    return github3.login(
+    gh = github3.login(
         github_user(), os.environ['GITHUB_ACCESS_TOKEN'])
+    # Enable the preview API for merges.
+    gh.session.headers.update({
+        'Accept': 'application/vnd.github.polaris-preview+json'
+    })
+    return gh
 
 
 def get_repository(gh, data):
