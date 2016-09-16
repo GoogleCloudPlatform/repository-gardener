@@ -16,6 +16,7 @@
 GitHub webhook is received."""
 
 import logging
+import re
 import time
 
 import github_helper
@@ -31,23 +32,26 @@ def check_for_auto_merge_trigger(text):
     """Checks the text for the phrases that should trigger an automerge."""
     text = text.lower()
 
-    # The comment must address @dpebot directly.
-    if not '@{}'.format(github_helper.github_user()) in text:
+    # The comment must address @dpebot directly, on the same line
+    comment = re.search(
+        r'@{}\s+\b(.+)'.format(github_helper.github_user()), text)
+    if not comment:
         return False
+    else:
+        # Just get the meat of the command
+        comment = comment.group(1).strip()
 
     # These should all be lowercase.
+    satisfaction = r'\b(passes|green|approv(al|es)|happy|satisfied)'
+    ci_tool = r'\btravis\b'
+    merge_action = r'\bmerge\b'
     triggers = (
-        'merge on green',
-        'merge when green',
-        'merge when travis passes',
-        'merge when travis is green',
-        'lgtm')
+        r'{}.+({}.+)?{}'.format(merge_action, ci_tool, satisfaction),
+        r'{}.+{},.+{}'.format(ci_tool, satisfaction, merge_action),
+        'lgtm',
+    )
 
-    for trigger in triggers:
-        if trigger in text:
-            return True
-
-    return False
+    return any(re.search(trigger, comment) for trigger in triggers)
 
 
 @webhook_helper.listen('issue_comment')
