@@ -17,6 +17,8 @@ GitHub webhook is received."""
 
 import time
 import logging
+import re
+import time
 
 import github_helper
 import webhook_helper
@@ -29,23 +31,25 @@ def pong(data):
 
 def check_for_auto_merge_trigger(text):
     """Checks the text for the phrases that should trigger an automerge."""
-    text = text.lower()
-
-    # The comment must address @dpebot directly.
-    if not '@{}'.format(github_helper.github_user()) in text:
+    # The comment must address @dpebot directly, on the same line
+    comment = re.search(
+        r'@{}\s+\b(.+)'.format(github_helper.github_user()), text, re.I)
+    if not comment:
         return False
+    else:
+        # Just get the meat of the command
+        comment = comment.group(1).strip()
 
+    satisfaction = r'\b(passes|green|approv(al|es)|happy|satisfied)'
+    ci_tool = r'\btravis\b'
+    merge_action = r'\bmerge\b'
     triggers = (
-        'merge on green',
-        'merge when green',
-        'merge when travis passes',
-        'LGTM')
+        r'{}.+({}.+)?{}'.format(merge_action, ci_tool, satisfaction),
+        r'{}.+{},.+{}'.format(ci_tool, satisfaction, merge_action),
+        'lgtm',
+    )
 
-    for trigger in triggers:
-        if trigger in text:
-            return True
-
-    return False
+    return any(re.search(trigger, comment, re.I) for trigger in triggers)
 
 
 @webhook_helper.listen('issue_comment')
@@ -98,6 +102,7 @@ def complete_merge_on_travis(data):
 
     # If it's not successful don't even bother.
     if data['state'] != 'success':
+        logging.info('Status not successful, returning.')
         return
 
     # NOTE: I'm not sure if there's a better way to do this. But, it seems
@@ -120,6 +125,8 @@ def complete_merge_on_travis(data):
 
     # Covert to pull requests so we can get the commits.
     pulls = [result.issue.pull_request() for result in results]
+    logging.info('Found {} potential PRs: {}'.format(
+        len(pulls), pulls))
 
     # See if this commit is in the PR.
     # this check isn't actually strictly necessary as the search above will
@@ -129,9 +136,14 @@ def complete_merge_on_travis(data):
         pull for pull in pulls
         if commit_sha in [commit.sha for commit in pull.commits()]]
 
+    logging.info('Commit {} is present in PRs: {}'.format(
+        commit_sha, pulls))
+
     # Merge!
     for pull in pulls:
-        pull.merge(squash=True)
+        # By supplying the sha here, it ensures that the PR will only be
+        # merged if that sha is the HEAD of the branch.
+        pull.merge(sha=commit_sha, squash=True)
 
         # Delete the branch if it's in this repo. ALSO DON'T DELETE MASTER.
         if (pull.head.ref != 'master' and
