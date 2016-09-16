@@ -30,18 +30,15 @@ def pong(data):
 
 def check_for_auto_merge_trigger(text):
     """Checks the text for the phrases that should trigger an automerge."""
-    text = text.lower()
-
     # The comment must address @dpebot directly, on the same line
     comment = re.search(
-        r'@{}\s+\b(.+)'.format(github_helper.github_user()), text)
+        r'@{}\s+\b(.+)'.format(github_helper.github_user()), text, re.I)
     if not comment:
         return False
     else:
         # Just get the meat of the command
         comment = comment.group(1).strip()
 
-    # These should all be lowercase.
     satisfaction = r'\b(passes|green|approv(al|es)|happy|satisfied)'
     ci_tool = r'\btravis\b'
     merge_action = r'\bmerge\b'
@@ -51,7 +48,7 @@ def check_for_auto_merge_trigger(text):
         'lgtm',
     )
 
-    return any(re.search(trigger, comment) for trigger in triggers)
+    return any(re.search(trigger, comment, re.I) for trigger in triggers)
 
 
 @webhook_helper.listen('issue_comment')
