@@ -48,6 +48,8 @@ def webhook():
         WEBHOOK_SECRET.encode('utf-8'),
         request.headers['X-Hub-Signature'],
         request.data)
+    logging.info('Delivery: {}'.format(
+        request.headers.get('X-GitHub-Delivery')))
     result = webhook_helper.process(request)
     return jsonify(result)
 

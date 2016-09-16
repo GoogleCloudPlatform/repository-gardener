@@ -15,6 +15,7 @@
 """This module contains functions that are called whenever a particular
 GitHub webhook is received."""
 
+import time
 import logging
 
 import github_helper
@@ -103,14 +104,19 @@ def complete_merge_on_travis(data):
     # the status change message doesn't tell you which PR the commit is
     # from. Indeed, it's possible for a commit to actually be in multiple
     # PRs. Anyways, the idea here is to get all open PRs with the
-    # tag 'automerge' and check if this commit is in that PR.
-    # If so, merge.
+    # tag 'automerge' and this commit in the PR.
+    commit_sha = data['commit']['sha']
     gh = github_helper.get_client()
     repository = github_helper.get_repository(gh, data)
 
-    results = gh.search_issues(
-        query='type:pr label:automerge status:success is:open repo:{}'.format(
-            data['repository']['full_name']))
+    # Sleep for about 15 seconds. Github's search index needs a few seconds
+    # before it'll find the results.
+    time.sleep(15)
+
+    query = '{} type:pr label:automerge status:success is:open repo:{}'.format(
+            commit_sha, data['repository']['full_name'])
+    logging.info('Querying with: {}'.format(query))
+    results = gh.search_issues(query=query)
 
     # Covert to pull requests so we can get the commits.
     pulls = [result.issue.pull_request() for result in results]
@@ -119,7 +125,6 @@ def complete_merge_on_travis(data):
     # this check isn't actually strictly necessary as the search above will
     # only return PRs that are 'green' which means we can safely merge all
     # of them. But, whatever, I'll leave it here for now anyway.
-    commit_sha = data['commit']['sha']
     pulls = [
         pull for pull in pulls
         if commit_sha in [commit.sha for commit in pull.commits()]]
