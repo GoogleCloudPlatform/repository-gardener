@@ -38,3 +38,7 @@ or push). Remove `-d` to actually push and send PR.
 ## Disclaimer
 
 This is not an official Google product or sample.
+
+## Adding the bot to your repository (Googlers only)
+
+A hosted version of the bot is [available](https://goto.google.com/dpebot) for Googlers.
