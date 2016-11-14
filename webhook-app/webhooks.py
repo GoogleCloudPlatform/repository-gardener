@@ -143,7 +143,9 @@ def complete_merge_on_travis(data):
     for pull in pulls:
         # By supplying the sha here, it ensures that the PR will only be
         # merged if that sha is the HEAD of the branch.
-        pull.merge(sha=commit_sha, squash=True)
+        # commit_message is set to None to use a default commit messsage, 
+        # rather than an empty one.
+        pull.merge(sha=commit_sha, squash=True, commit_message=None)
 
         # Delete the branch if it's in this repo. ALSO DON'T DELETE MASTER.
         if (pull.head.ref != 'master' and
