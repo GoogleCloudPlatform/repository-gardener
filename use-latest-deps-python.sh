@@ -61,7 +61,6 @@ set -x
 
 pip install --upgrade nox-automation
 nox -s reqcheck -- update
-nox -s reqrollup
 
 
 git diff --quiet
