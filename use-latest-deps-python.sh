@@ -60,7 +60,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 
 pip install --upgrade nox-automation
-nox -s reqcheck -- update
+nox -s check_requirements -- update
 
 
 git diff --quiet
