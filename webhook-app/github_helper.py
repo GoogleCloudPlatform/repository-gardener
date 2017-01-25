@@ -65,3 +65,15 @@ def accept_all_invitations(gh):
         gh.session.patch(invitation['url'], headers=headers)
 
     return [invitation['repository'] for invitation in invitations]
+
+
+def get_permission(gh, owner, repo, user):
+    # Required to access the collaborators API.
+    headers = {'Accept': 'application/vnd.github.korra-preview'}
+
+    result = gh.session.get(
+        'https://api.github.com/repos/{}/{}/collaborators'
+        '/{}/permission'.format(owner, repo, user),
+        headers=headers).json()
+
+    return result['permission']

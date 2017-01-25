@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import logging
-import os
 
 from flask import Flask, jsonify, request
 
@@ -31,8 +30,6 @@ logging.getLogger('oauth2client').setLevel(level=logging.WARNING)
 
 runtimeconfig.fetch_and_update_environ('dpebot')
 
-WEBHOOK_SECRET = os.environ['GITHUB_WEBHOOK_SECRET']
-
 
 app = Flask(__name__)
 
@@ -46,7 +43,6 @@ def hello():
 @app.route('/webhook', methods=['POST'])
 def webhook():
     webhook_helper.check_signature(
-        WEBHOOK_SECRET.encode('utf-8'),
         request.headers['X-Hub-Signature'],
         request.data)
     logging.info('Delivery: {}'.format(
@@ -55,13 +51,9 @@ def webhook():
     return jsonify(result)
 
 
-@app.route('/accept_invitations')
-def accept_invitation():
-    gh = github_helper.get_client()
-    repositories = github_helper.accept_all_invitations(gh)
-
-    return jsonify(
-        {'accepted': [repository['full_name'] for repository in repositories]})
+@app.route('/test')
+def test():
+    return 'meep'
 
 
 @app.errorhandler(500)

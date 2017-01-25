@@ -18,6 +18,12 @@ from collections import defaultdict
 import hashlib
 import hmac
 import logging
+import os
+
+import github_helper
+
+WEBHOOK_SECRET = os.environ['GITHUB_WEBHOOK_SECRET'].encode('utf-8')
+WEBHOOK_URL = os.environ['GITHUB_WEBHOOK_URL'].encode('utf-8')
 
 
 def check_signature(secret, header_signature, request_body):
@@ -37,6 +43,20 @@ def check_signature(secret, header_signature, request_body):
 
     return True
 
+
+def create_webhook(owner, repository):
+    gh = github_helper.get_client()
+    repo = gh.repository(owner, repository)
+
+    hook = repo.create_hook(
+        name='web',
+        config={
+            'url': WEBHOOK_URL,
+            'content_type': 'json',
+            'secret': WEBHOOK_SECRET},
+        events=['*'])
+
+    return hook
 
 # Maps events to a list of functions to call for the webhook.
 _web_hook_event_map = defaultdict(list)
