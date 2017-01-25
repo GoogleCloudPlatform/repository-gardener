@@ -18,7 +18,6 @@ GitHub webhook is received."""
 import time
 import logging
 import re
-import time
 
 import github_helper
 import webhook_helper

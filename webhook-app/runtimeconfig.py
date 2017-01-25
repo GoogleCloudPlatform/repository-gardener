@@ -34,10 +34,8 @@ import base64
 import logging
 import os
 
-import gcloud._helpers
-import gcloud.credentials
-import httplib2shim
-import requests
+import google.auth
+import google.auth.transport.requests
 
 
 _RUNTIMECONFIG_API_ROOT = 'https://runtimeconfig.googleapis.com/v1beta1/'
@@ -46,14 +44,10 @@ logger = logging.getLogger(__name__)
 
 
 def _create_session():
-    credentials = gcloud.credentials.get_credentials()
-    credentials = credentials.create_scoped(
-        ['https://www.googleapis.com/auth/cloud-platform'])
-    credentials.refresh(httplib2shim.Http(proxy_info=None))
-    session = requests.Session()
-    session.headers['Authorization'] = 'Bearer {}'.format(
-        credentials.access_token)
-    return session
+    credentials, project = google.auth.default(
+        scopes=['https://www.googleapis.com/auth/cloud-platform'])
+    session = google.auth.transport.requests.AuthorizedSession(credentials)
+    return session, project
 
 
 def _list_variables(session, project, config_name):
@@ -87,13 +81,10 @@ def fetch(config_name):
     """Fetch the variables and values for the given config.
 
     Returns a dictionary of variable names to values."""
-    project = gcloud._helpers._bytes_to_unicode(
-        gcloud._helpers._determine_default_project())
+    session, project = _create_session()
 
     logging.info('Fetching runtime configuration {} from {}.'.format(
         config_name, project))
-
-    session = _create_session()
 
     variable_names = _list_variables(session, project, config_name)
     variables = _fetch_variable_values(session, variable_names)

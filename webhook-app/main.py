@@ -17,6 +17,7 @@ import os
 
 from flask import Flask, jsonify, request
 
+import github_helper
 import runtimeconfig
 import webhook_helper
 import webhooks
@@ -52,6 +53,15 @@ def webhook():
         request.headers.get('X-GitHub-Delivery')))
     result = webhook_helper.process(request)
     return jsonify(result)
+
+
+@app.route('/accept_invitations')
+def accept_invitation():
+    gh = github_helper.get_client()
+    repositories = github_helper.accept_all_invitations(gh)
+
+    return jsonify(
+        {'accepted': [repository['full_name'] for repository in repositories]})
 
 
 @app.errorhandler(500)

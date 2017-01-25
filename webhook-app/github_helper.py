@@ -28,8 +28,8 @@ def get_client():
     """Returns an authenticated github3 client."""
     gh = github3.login(
         github_user(), os.environ['GITHUB_ACCESS_TOKEN'])
-    # Enable the preview API for merges.
     gh.session.headers.update({
+        # Enable the preview API for merges and invitations
         'Accept': 'application/vnd.github.polaris-preview+json'
     })
     return gh
@@ -51,3 +51,17 @@ def get_pull_request(gh, data):
     return gh.pull_request(
         data['repository']['owner']['login'], data['repository']['name'],
         data['issue']['number'])
+
+
+def accept_all_invitations(gh):
+    """Accepts all invitations and returns a list of repositories."""
+    # Required to access the invitations API.
+    headers = {'Accept': 'application/vnd.github.swamp-thing-preview+json'}
+    invitations = gh.session.get(
+        'https://api.github.com/user/repository_invitations',
+        headers=headers).json()
+
+    for invitation in invitations:
+        gh.session.patch(invitation['url'], headers=headers)
+
+    return [invitation['repository'] for invitation in invitations]

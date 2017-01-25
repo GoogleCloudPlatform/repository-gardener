@@ -3,5 +3,4 @@ gunicorn==19.6.0
 requests[security]
 # HEAD version required for merge(squash=True)
 git+https://github.com/sigmavirus24/github3.py#egg=github3.py
-gcloud==0.18.1
-httplib2shim==0.0.1
+google-auth
