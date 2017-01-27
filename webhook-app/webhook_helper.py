@@ -84,10 +84,10 @@ def process(request):
 
     logging.info('Event: {}'.format(event))
 
-    import json
-    guid = request.headers['X-GitHub-Delivery']
-    with open('payloads/{}.json'.format(guid), 'w') as f:
-        json.dump(data, f, indent=2)
+    # import json
+    # guid = request.headers['X-GitHub-Delivery']
+    # with open('payloads/{}.json'.format(guid), 'w') as f:
+    #     json.dump(data, f, indent=2)
 
     for function in functions:
         result = function(data)

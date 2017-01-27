@@ -190,7 +190,6 @@ def merge_pull_request(repo, pull, commit_sha=None):
     # By supplying the sha here, it ensures that the PR will only be
     # merged if that sha is the HEAD of the branch.
     logging.info('Merging {}.'.format(pull))
-    return  # TODO: REMOVE ME.
     pull.merge(sha=commit_sha, squash=True)
 
     # Delete the branch if it's in this repo. ALSO DON'T DELETE MASTER.
