@@ -39,8 +39,8 @@ def check_for_auto_merge_trigger(text):
         # Just get the meat of the command
         comment = comment.group(1).strip()
 
-    satisfaction = r'\b(passes|green|approv(al|es)|happy|satisfied)'
-    ci_tool = r'\btravis\b'
+    satisfaction = r'\b(pass|passes|green|approv(al|es)|happy|satisfied)'
+    ci_tool = r'\b(travis|tests|statuses)\b'
     merge_action = r'\bmerge\b'
     triggers = (
         r'{}.+({}.+)?{}'.format(merge_action, ci_tool, satisfaction),
@@ -84,12 +84,15 @@ def acknowledge_merge_on_travis(data):
 
     # Write a comment about it.
     pr = github_helper.get_pull_request(gh, data)
-    pr.create_comment('Okay! I\'ll merge when all statuses are green.')
+    pr.create_comment(
+        'Okay! I\'ll merge when all statuses are green and all reviewers '
+        'approve.')
     pr.issue().add_labels('automerge')
+    pr.issue().assign(github_helper.github_user())
 
 
 @webhook_helper.listen('status')
-def complete_merge_on_travis(data):
+def commit_status_complete_merge_on_travis(data):
     """When all statuses on a PR are green, this hook will automatically
     merge it if it's labeled with 'automerge'.
 
@@ -140,11 +143,57 @@ def complete_merge_on_travis(data):
 
     # Merge!
     for pull in pulls:
-        # By supplying the sha here, it ensures that the PR will only be
-        # merged if that sha is the HEAD of the branch.
-        pull.merge(sha=commit_sha, squash=True)
+        merge_pull_request(repository, pull, commit_sha=commit_sha)
 
-        # Delete the branch if it's in this repo. ALSO DON'T DELETE MASTER.
-        if (pull.head.ref != 'master' and
-                '/'.join(pull.head.repo) == data['repository']['full_name']):
-            repository.ref('heads/{}'.format(pull.head.ref)).delete()
+
+@webhook_helper.listen('pull_request_review')
+def pull_request_review_merge_on_travis(data):
+    """When all approvers approve and statuses pass, this hook will
+    automatically merge it if it's labeled with 'automerge'.
+
+    Status data reference:
+    https://developer.github.com/v3/activity/events/types/#pullrequestreviewevent
+    """
+    # If it's not successful don't even bother.
+    if data['review']['state'] != 'approved':
+        logging.info('Not approved, returning.')
+        return
+
+    # If the PR is closed, don't bother
+    if data['pull_request']['state'] != 'open':
+        logging.info('Closed, returning.')
+        return
+
+    gh = github_helper.get_client()
+
+    repo = gh.repository(
+        data['repository']['owner']['login'],
+        data['repository']['name'])
+    pr = repo.pull_request(data['pull_request']['number'])
+
+    merge_pull_request(repo, pr, commit_sha=pr.head.sha)
+
+
+def merge_pull_request(repo, pull, commit_sha=None):
+    """Merges a pull request."""
+
+    # only merge pulls that have all green statuses
+    if not github_helper.is_sha_green(repo, commit_sha):
+        logging.info('Not merging {}, not green.'.format(pull))
+        return
+
+    # Only merge pulls that have been approved!
+    if not github_helper.is_pr_approved(pull):
+        logging.info('Not merging {}, not approved.'.format(pull))
+        return
+
+    # By supplying the sha here, it ensures that the PR will only be
+    # merged if that sha is the HEAD of the branch.
+    logging.info('Merging {}.'.format(pull))
+    return  # TODO: REMOVE ME.
+    pull.merge(sha=commit_sha, squash=True)
+
+    # Delete the branch if it's in this repo. ALSO DON'T DELETE MASTER.
+    if (pull.head.ref != 'master' and
+            '/'.join(pull.head.repo) == repo.full_name):
+        repo.ref('heads/{}'.format(pull.head.ref)).delete()

@@ -67,6 +67,57 @@ def accept_all_invitations(gh):
     return [invitation['repository'] for invitation in invitations]
 
 
+def get_pr_requested_reviewers(pr):
+    """Gets a list of all requested reviewers on a PR."""
+    # Required to access the PR review API.
+    headers = {'Accept': 'application/vnd.github.black-cat-preview+json'}
+    url = (
+        'https://api.github.com/repos/{}/{}/pulls/{}'
+        '/requested_reviewers'.format(
+            pr.repository[0], pr.repository[1], pr.number))
+
+    reviewers = pr.session.get(url, headers=headers).json()
+
+    return reviewers
+
+
+def get_pr_reviews(pr):
+    """Gets a list of all submitted reviews on a PR. Does not list requested
+    reviews."""
+    # Required to access the PR review API.
+    headers = {'Accept': 'application/vnd.github.black-cat-preview+json'}
+    reviews = pr.session.get(
+        'https://api.github.com/repos/{}/{}/pulls/{}/reviews'.format(
+            pr.repository[0], pr.repository[1], pr.number),
+        headers=headers).json()
+
+    return reviews
+
+
+def is_pr_approved(pr):
+    """True if the PR has been completely approved."""
+    review_requests = get_pr_requested_reviewers(pr)
+
+    if not len(review_requests):
+        return True
+
+    approved_users = [
+        review['user']['login'] for review in get_pr_reviews(pr)
+        if review['status'] == 'APPROVED']
+
+    requested_users = [user['login'] for user in review_requests]
+
+    return set(approved_users) == set(requested_users)
+
+
+def is_sha_green(repo, sha):
+    url = 'https://api.github.com/repos/{}/{}/commits/{}/status'.format(
+        repo.owner.login, repo.name, sha)
+    result = repo.session.get(url).json()
+
+    return result['state'] == 'success'
+
+
 def get_permission(gh, owner, repo, user):
     # Required to access the collaborators API.
     headers = {'Accept': 'application/vnd.github.korra-preview'}
