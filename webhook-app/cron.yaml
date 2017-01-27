@@ -1,0 +1,4 @@
+cron:
+- description: auto create webhooks
+  url: /cron/create_webhooks
+  schedule: every 5 minutes

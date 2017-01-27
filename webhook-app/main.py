@@ -16,8 +16,8 @@ import logging
 
 from flask import Flask, jsonify, request
 
-import github_helper
 import runtimeconfig
+import webhook_creator
 import webhook_helper
 import webhooks
 (webhooks)
@@ -51,9 +51,10 @@ def webhook():
     return jsonify(result)
 
 
-@app.route('/test')
-def test():
-    return 'meep'
+@app.route('/cron/create_webhooks')
+def cron_create_webhooks():
+    webhook_creator.create_webhooks()
+    return 'done'
 
 
 @app.errorhandler(500)

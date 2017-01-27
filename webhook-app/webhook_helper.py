@@ -22,11 +22,16 @@ import os
 
 import github_helper
 
-WEBHOOK_SECRET = os.environ['GITHUB_WEBHOOK_SECRET'].encode('utf-8')
-WEBHOOK_URL = os.environ['GITHUB_WEBHOOK_URL'].encode('utf-8')
+
+def webhook_secret():
+    return os.environ['GITHUB_WEBHOOK_SECRET'].encode('utf-8')
 
 
-def check_signature(secret, header_signature, request_body):
+def webhook_url():
+    return os.environ['GITHUB_WEBHOOK_URL']
+
+
+def check_signature(header_signature, request_body):
     if not header_signature:
         raise ValueError('No X-Hub-Signature header.')
 
@@ -36,7 +41,7 @@ def check_signature(secret, header_signature, request_body):
         raise ValueError('Unsupported digest algorithm {}.'.format(algorithm))
 
     body_digest = hmac.new(
-        secret, msg=request_body, digestmod=hashlib.sha1).hexdigest()
+        webhook_secret(), msg=request_body, digestmod=hashlib.sha1).hexdigest()
 
     if not hmac.compare_digest(body_digest, signature_digest):
         raise ValueError('Body digest did not match signature digest')
@@ -51,9 +56,9 @@ def create_webhook(owner, repository):
     hook = repo.create_hook(
         name='web',
         config={
-            'url': WEBHOOK_URL,
+            'url': webhook_url(),
             'content_type': 'json',
-            'secret': WEBHOOK_SECRET},
+            'secret': webhook_secret().decode('utf-8')},
         events=['*'])
 
     return hook
