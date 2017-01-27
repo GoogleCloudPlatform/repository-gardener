@@ -29,9 +29,10 @@ def create_webhooks():
     """
 
     gh = github_helper.get_client()
-    issues = gh.user_issues(filter='assigned', state='open')
+    issues = gh.issues(filter='assigned', state='open')
 
     for issue in issues:
+        print(issue)
         # Does someone want us to add the webhook?
         if issue.title.lower() == 'add webhook':
             logging.info('Processing issue {}'.format(issue.url))
