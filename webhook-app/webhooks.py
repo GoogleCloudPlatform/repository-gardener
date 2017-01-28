@@ -177,6 +177,11 @@ def pull_request_review_merge_on_travis(data):
 def merge_pull_request(repo, pull, commit_sha=None):
     """Merges a pull request."""
 
+    # only merge pulls that are labeled automerge
+    labels = [label.name for label in pull.issue().labels()]
+    if 'automerge' not in labels:
+        logging.info('Not merging {}, not labeled automerge'.format(pull))
+
     # only merge pulls that have all green statuses
     if not github_helper.is_sha_green(repo, commit_sha):
         logging.info('Not merging {}, not green.'.format(pull))
