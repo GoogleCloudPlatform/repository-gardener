@@ -1,11 +1,10 @@
 runtime: python
 env: flex
-entrypoint: bash -c 'eval $(rcloadenv) && gunicorn -b :$PORT main:app'
+entrypoint: rcloadenv dpebot && gunicorn -b :$PORT main:app'
 
 runtime_config:
   python_version: 3
 
 env_variables:
-  GOOGLE_RUNTIME_CONFIG_NAME: dpebot
   # Required for requests to be able to verify googleapis.com certificates.
   REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
