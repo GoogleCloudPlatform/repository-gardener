@@ -16,7 +16,6 @@ import logging
 
 from flask import Flask, jsonify, request
 
-import runtimeconfig
 import webhook_creator
 import webhook_helper
 import webhooks
@@ -27,8 +26,6 @@ logging.getLogger('github3').setLevel(level=logging.WARNING)
 logging.getLogger('requests').setLevel(level=logging.WARNING)
 logging.getLogger('urllib3').setLevel(level=logging.WARNING)
 logging.getLogger('oauth2client').setLevel(level=logging.WARNING)
-
-runtimeconfig.fetch_and_update_environ('dpebot')
 
 
 app = Flask(__name__)
