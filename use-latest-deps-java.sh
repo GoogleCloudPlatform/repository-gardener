@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2016 Google Inc. All Rights Reserved.
+# Copyright 2016 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -68,17 +68,6 @@ mvn versions:update-properties "-Dmaven.version.rules=$RULES_URI"
 # If there were any changes, test them and then push and send a PR.
 git diff --quiet
 if [[ "$?" -ne 0 ]] ; then
-  if [[ -e travis.sh ]] ; then
-    ./travis.sh
-  else
-    mvn --batch-mode clean verify
-  fi
-
-  if [[ "$?" -ne 0 ]] ; then
-    (>&2 echo "Tests failed! Not sending PR.")
-    exit 1
-  fi
-
   if [[ "$DRYRUN" -eq 0 ]] ; then
     "${DIR}/commit-and-push.sh"
     "${DIR}/send-pr.sh" "$REPO"
