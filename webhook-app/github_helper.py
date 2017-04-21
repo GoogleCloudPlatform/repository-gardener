@@ -14,6 +14,7 @@
 
 """Helpers for interacting with the GitHub API and hook events."""
 
+import json
 import os
 
 import github3
@@ -128,3 +129,22 @@ def get_permission(gh, owner, repo, user):
         headers=headers).json()
 
     return result['permission']
+
+
+def squash_merge_pr(pr, sha):
+    data = {
+        'sha': sha,
+        'merge_method': 'squash'
+    }
+    # Required to access the PR merge API.
+    headers = {'Accept': 'application/vnd.github.polaris-preview+json'}
+
+    response = pr.session.put(
+        'https://api.github.com/repos/{}/{}/pulls/{}/merge'.format(
+            pr.repository[0], pr.repository[1], pr.number),
+        json=data,
+        headers=headers)
+
+    response.raise_for_status()
+
+    return response.json()
