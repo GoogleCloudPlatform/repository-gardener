@@ -57,6 +57,11 @@ REPO=$1
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+# Activate a virtualenv to make installing packages easier
+virtualenv --python python3.5 env
+# shellcheck disable=SC1091
+source env/bin/activate
+
 set -x
 
 pip install --upgrade nox-automation
