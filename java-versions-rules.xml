@@ -1,0 +1,111 @@
+<!--
+Copyright 2016 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<ruleset comparisonMethod="maven"
+         xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 http://mojo.codehaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+  <ignoreVersions>
+<!--     <ignoreVersion type="regex">.*-alpha.*</ignoreVersion> -->
+    <ignoreVersion type="regex">.*-b[0-9]*</ignoreVersion>
+    <ignoreVersion type="regex">.*-pre.*</ignoreVersion>
+    <ignoreVersion type="regex">.*public_draft</ignoreVersion>
+    <ignoreVersion type="regex">.*-rc(-)?[0-9]*</ignoreVersion>
+  </ignoreVersions>
+  <rules>
+    <rule groupId="com.google.appengine" comparisonMethod="maven" />
+
+    <!-- Jetty should be manually, not automatically updated.
+         https://github.com/GoogleCloudPlatform/java-docs-samples/pull/323 -->
+    <rule groupId="org.eclipse.jetty" artifactId="jetty-maven-plugin" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- MySQL connector should not be automatically updated.
+         Version 5.x is for production systems on Java 7 & Java 8.
+         https://github.com/GoogleCloudPlatform/java-docs-samples/pull/456#discussion_r92676013 -->
+    <rule groupId="mysql" artifactId="mysql-connector-java" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore grpc-versions upgrades -->
+    <rule groupId="io.grpc" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore servlet upgrades -->
+    <rule groupId="javax.servlet" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Guava should not be automatically updated.
+         Version 21 requires Java 8 only. -->
+    <rule groupId="com.google.guava" artifactId="guava" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <rule groupId="org.springframework.boot" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>                                                                                                               
+      </ignoreVersions>
+    </rule>
+                                                               
+    <!-- SendGrid 3 libraries are broken in App Engine standard environment -->
+    <rule groupId="com.sendgrid" artifactId="sendgrid-java" comparisonMethod="maven">
+      <ignoreVersions>
+<!--         <ignoreVersion type="regex">3.*</ignoreVersion> -->
+        <ignoreVersion type="regex">.*</ignoreVersion> <!-- Lock it for now - until we can updade and test updates -->
+      </ignoreVersions>
+    </rule>
+
+    <!-- Logging v2 is a breaking change from v1, but samples are still v1. -->
+    <rule groupId="com.google.apis" artifactId="google-api-services-logging" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">v2.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore beta versions of the App Engine Maven plugin -->
+    <rule groupId="com.google.cloud.tools" artifactId="appengine-maven-plugin" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*-beta.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore beta versions of Mockito -->
+    <rule groupId="org.mockito" artifactId="mockito-all" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*-beta.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore beta versions of Xmemcached-->
+    <rule groupId="com.googlecode.xmemcached" artifactId="xmemcached" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*-beta.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+  </rules>
+</ruleset>

@@ -57,10 +57,11 @@ REPO=$1
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+set -e
 set -x
 
 # Update dependencies and plugins that use properties for version numbers.
-RULES_URI="file://$DIR/java-repo-tools/versions-rules.xml"
+RULES_URI="file://$DIR/java-versions-rules.xml"
 mvn -U versions:use-latest-releases "-Dmaven.version.rules=$RULES_URI"
 mvn -U versions:update-properties "-Dmaven.version.rules=$RULES_URI"
 
