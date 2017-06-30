@@ -63,11 +63,13 @@ virtualenv --python python3.5 env
 source env/bin/activate
 
 set -x
+set -e
 
 pip install --upgrade nox-automation
 nox -s check_requirements -- update
 
 
+set +e
 git diff --quiet
 if [[ "$?" -ne 0 ]] ; then
   if [[ "$DRYRUN" -eq 0 ]] ; then

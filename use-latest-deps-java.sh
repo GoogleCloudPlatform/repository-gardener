@@ -67,9 +67,11 @@ mvn -U versions:update-properties "-Dmaven.version.rules=$RULES_URI"
 
 
 # If there were any changes, test them and then push and send a PR.
+set +e
 git diff --quiet
 if [[ "$?" -ne 0 ]] ; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
+    set -e
     "${DIR}/commit-and-push.sh"
     "${DIR}/send-pr.sh" "$REPO"
   fi
