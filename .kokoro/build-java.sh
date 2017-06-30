@@ -28,5 +28,5 @@ chmod +x *.sh
 
 (
 cd repo-to-update
-../use-latest-deps-python.sh "${DPEBOT_REPO}"
+../use-latest-deps-java.sh "${DPEBOT_REPO}"
 )
