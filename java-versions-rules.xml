@@ -64,12 +64,6 @@ limitations under the License.
         <ignoreVersion type="regex">.*</ignoreVersion>
       </ignoreVersions>
     </rule>
-
-    <rule groupId="org.springframework.boot" comparisonMethod="maven">
-      <ignoreVersions>
-        <ignoreVersion type="regex">.*</ignoreVersion>                                                                                                               
-      </ignoreVersions>
-    </rule>
                                                                
     <!-- SendGrid 3 libraries are broken in App Engine standard environment -->
     <rule groupId="com.sendgrid" artifactId="sendgrid-java" comparisonMethod="maven">
