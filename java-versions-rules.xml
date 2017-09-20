@@ -50,6 +50,13 @@ limitations under the License.
       </ignoreVersions>
     </rule>
 
+   <!-- Ignore netty-versions upgrades -->
+    <rule groupId="io.netty" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
     <!-- Ignore servlet upgrades -->
     <rule groupId="javax.servlet" comparisonMethod="maven">
       <ignoreVersions>
