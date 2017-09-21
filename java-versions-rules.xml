@@ -50,8 +50,15 @@ limitations under the License.
       </ignoreVersions>
     </rule>
 
-   <!-- Ignore netty-versions upgrades -->
+    <!-- Ignore netty-versions upgrades -->
     <rule groupId="io.netty" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
+    <!-- Ignore slf4j upgrades 1.8 appears not to work w/ kotlin / spark -->
+    <rule groupId="org.slf4j" comparisonMethod="maven">
       <ignoreVersions>
         <ignoreVersion type="regex">.*</ignoreVersion>
       </ignoreVersions>
