@@ -48,11 +48,11 @@ def get_android_replacements():
     return replacements
 
 def is_major_update(old_version, new_version):
-  """Compares version strings to see if it's a major update."""
-  old_major = old_version.split('.')[0]
-  new_major = new_version.split('.')[0]
+    """Compares version strings to see if it's a major update."""
+    old_major = old_version.split('.')[0]
+    new_major = new_version.split('.')[0]
 
-  return old_major != new_major
+    return old_major != new_major
 
 def get_dep_replacements():
     """Gets a dictionary of all dependency replacements to be made."""
