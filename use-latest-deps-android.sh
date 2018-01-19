@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Copyright 2016 Google Inc.
+# Copyright 2018 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,14 +60,23 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 set -x
 
-# Update dependencies and plugins that use properties for version numbers.
-RULES_URI="file://$DIR/java-versions-rules.xml"
-mvn -U versions:use-latest-releases "-Dmaven.version.rules=$RULES_URI"
-mvn -U versions:update-properties "-Dmaven.version.rules=$RULES_URI"
+# Generate JSON dependencies report
+./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
 
+# Activate a virtualenv
+virtualenv --python python2.7 env
+# shellcheck disable=SC1091
+source env/bin/activate
+
+# Run Android fixer script
+python "${DIR}/fix-android-dependencies.py"
+
+# Remove the virtualenv
+rm -rf env
 
 # If there were any changes, test them and then push and send a PR.
 set +e
+
 if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
     set -e

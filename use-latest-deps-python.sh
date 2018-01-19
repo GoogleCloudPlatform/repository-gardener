@@ -70,8 +70,7 @@ nox -s check_requirements -- update
 
 
 set +e
-git diff --quiet
-if [[ "$?" -ne 0 ]] ; then
+if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
     "${DIR}/commit-and-push.sh"
   fi
