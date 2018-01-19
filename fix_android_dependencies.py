@@ -27,9 +27,9 @@ def find_gradle_files():
     """Finds all build.gradle files, recursively."""
     gradle_files = []
     for root, dirs, files in os.walk('.'):
-        for fn in files:
-            if fn.endswith('build.gradle'):
-                gradle_files.append(os.path.join(root, fn))
+        for filename in files:
+            if filename.endswith('build.gradle'):
+                gradle_files.append(os.path.join(root, filename))
 
     return gradle_files
 
@@ -91,18 +91,18 @@ def update_all():
         print '{} --> {}'.format(k, v)
 
     # Iterate through each file and replace it
-    for fn in find_gradle_files():
-        print 'Updating dependencies for: {}'.format(fn)
+    for gradle_file in find_gradle_files():
+        print 'Updating dependencies for: {}'.format(gradle_file)
 
         new_data = ''
-        with open(fn, 'r') as f:
+        with open(gradle_file, 'r') as f:
             # Perform each replacement
             new_data = f.read()
             for (k, v) in replacements.iteritems():
                 new_data = re.sub(k, v, new_data)
 
         # Write the file
-        with open(fn, 'w') as f:
+        with open(gradle_file, 'w') as f:
             f.write(new_data)
 
 if __name__ == '__main__':
