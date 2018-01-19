@@ -77,7 +77,7 @@ rm -rf env
 # If there were any changes, test them and then push and send a PR.
 set +e
 
-if ! git diff --quiet ; then
+if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
     set -e
     "${DIR}/commit-and-push.sh"
