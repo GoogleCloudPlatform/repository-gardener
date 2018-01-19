@@ -23,17 +23,17 @@ GROUPS_ALLOWED_MAJOR_UPDATE = [
 # $ ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
 INPUT_JSON = 'build/dependencyUpdates/report.json'
 
-def findGradleFiles():
+def find_gradle_files():
     """Finds all build.gradle files, recursively."""
     gradle_files = []
     for root, dirs, files in os.walk('.'):
-        for file in files:
-            if file.endswith('build.gradle'):
-                gradle_files.append(os.path.join(root, file))
+        for fn in files:
+            if fn.endswith('build.gradle'):
+                gradle_files.append(os.path.join(root, fn))
 
     return gradle_files
 
-def getAndroidReplacements():
+def get_android_replacements():
     """Gets a dictionary of all android-specific replacements to be made."""
     replacements = {}
 
@@ -47,14 +47,14 @@ def getAndroidReplacements():
 
     return replacements
 
-def isMajorUpdate(old_version, new_version):
+def is_major_update(old_version, new_version):
   """Compares version strings to see if it's a major update."""
   old_major = old_version.split('.')[0]
   new_major = new_version.split('.')[0]
 
   return old_major != new_major
 
-def getDepReplacements():
+def get_dep_replacements():
     """Gets a dictionary of all dependency replacements to be made."""
     replacements = {}
     with open(INPUT_JSON, 'r') as f:
@@ -68,7 +68,7 @@ def getDepReplacements():
             curr_version = dep['version']
             new_version = dep['available']['release']
 
-            if (isMajorUpdate(curr_version, new_version) and
+            if (is_major_update(curr_version, new_version) and
                 group not in GROUPS_ALLOWED_MAJOR_UPDATE):
               print 'Skipping major update to {}:{}'.format(group, name)
               continue
@@ -79,11 +79,11 @@ def getDepReplacements():
 
     return replacements
 
-def updateAll():
+def update_all():
     """Runs through all build.gradle files and performs replacements."""
     replacements = {}
-    replacements.update(getAndroidReplacements())
-    replacements.update(getDepReplacements())
+    replacements.update(get_android_replacements())
+    replacements.update(get_dep_replacements())
 
     # Print all updates found
     print 'Dependency updates:'
@@ -91,19 +91,19 @@ def updateAll():
         print '{} --> {}'.format(k, v)
 
     # Iterate through each file and replace it
-    for file in findGradleFiles():
-        print 'Updating dependencies for: {}'.format(file)
+    for fn in find_gradle_files():
+        print 'Updating dependencies for: {}'.format(fn)
 
         new_data = ''
-        with open(file, 'r') as f:
+        with open(fn, 'r') as f:
             # Perform each replacement
             new_data = f.read()
             for (k, v) in replacements.iteritems():
                 new_data = re.sub(k, v, new_data)
 
         # Write the file
-        with open(file, 'w') as f:
+        with open(fn, 'w') as f:
             f.write(new_data)
 
 if __name__ == '__main__':
-  updateAll()
+  update_all()
