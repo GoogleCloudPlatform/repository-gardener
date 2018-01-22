@@ -14,7 +14,9 @@ BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"][\w\.]+[\'\"]'
 
 GROUPS_ALLOWED_MAJOR_UPDATE = [
   'com.google.android.gms',
-  'com.android.support'
+  'com.google.firebase',
+  'com.android.support',
+  'com.android.support.test'
 ]
 
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
