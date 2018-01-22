@@ -10,7 +10,7 @@ BUILD_TOOLS_VERSION = '27.0.2'
 
 COMPILE_SDK_RE = r'compileSdkVersion[\s][\w]+'
 TARGET_SDK_RE = r'targetSdkVersion[\s][\w]+'
-BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"][\w\.]+[\'\"]'
+BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"\w\.]+'
 
 GROUPS_ALLOWED_MAJOR_UPDATE = [
   'com.google.android.gms',
