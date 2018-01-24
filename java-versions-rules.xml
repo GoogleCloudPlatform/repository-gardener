@@ -23,6 +23,7 @@ limitations under the License.
     <ignoreVersion type="regex">.*public_draft</ignoreVersion>
     <ignoreVersion type="regex">.*-rc(-)?[0-9]*</ignoreVersion>
     <ignoreVersion type="regex">.*jre7</ignoreVersion>
+    <ignoreVersion type="regex">.*jre6</ignoreVersion>
   </ignoreVersions>
   <rules>
     <rule groupId="com.google.appengine" comparisonMethod="maven" />
