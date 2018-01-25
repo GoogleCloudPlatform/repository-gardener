@@ -1,4 +1,4 @@
-# Copyright 2016 Google Inc. All Rights Reserved.
+# Copyright 2018 Google Inc. All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ import logging
 
 from flask import Flask, jsonify, request
 
+import invitations
 import webhook_creator
 import webhook_helper
 import webhooks
@@ -51,6 +52,12 @@ def webhook():
 @app.route('/cron/create_webhooks')
 def cron_create_webhooks():
     webhook_creator.create_webhooks()
+    return 'done'
+
+
+@app.route('/cron/accept_invitations')
+def cron_accept_invitations():
+    invitations.accept_invitations()
     return 'done'
 
 
