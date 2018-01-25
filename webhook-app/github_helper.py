@@ -29,10 +29,6 @@ def get_client():
     """Returns an authenticated github3 client."""
     gh = github3.login(
         github_user(), os.environ['GITHUB_ACCESS_TOKEN'])
-    gh.session.headers.update({
-        # Enable the preview API for merges and invitations
-        'Accept': 'application/vnd.github.polaris-preview+json'
-    })
     return gh
 
 
@@ -70,16 +66,14 @@ def accept_all_invitations(gh):
 
 def get_pr_requested_reviewers(pr):
     """Gets a list of all requested reviewers on a PR."""
-    # Required to access the PR review API.
-    headers = {'Accept': 'application/vnd.github.black-cat-preview+json'}
     url = (
         'https://api.github.com/repos/{}/{}/pulls/{}'
         '/requested_reviewers'.format(
             pr.repository[0], pr.repository[1], pr.number))
 
-    reviewers = pr.session.get(url, headers=headers).json()
+    reviewers = pr.session.get(url).json()
 
-    return reviewers
+    return reviewers.get('users', [])
 
 
 def get_pr_reviews(pr):
@@ -102,9 +96,11 @@ def is_pr_approved(pr):
     if not len(review_requests):
         return True
 
+    reviews = get_pr_reviews(pr)
+
     approved_users = [
-        review['user']['login'] for review in get_pr_reviews(pr)
-        if review['status'] == 'APPROVED']
+        review['user']['login'] for review in reviews
+        if review['state'] == 'APPROVED']
 
     requested_users = [user['login'] for user in review_requests]
 
@@ -136,14 +132,11 @@ def squash_merge_pr(pr, sha):
         'sha': sha,
         'merge_method': 'squash'
     }
-    # Required to access the PR merge API.
-    headers = {'Accept': 'application/vnd.github.polaris-preview+json'}
 
     response = pr.session.put(
         'https://api.github.com/repos/{}/{}/pulls/{}/merge'.format(
             pr.repository[0], pr.repository[1], pr.number),
-        json=data,
-        headers=headers)
+        json=data)
 
     response.raise_for_status()
 

@@ -32,39 +32,40 @@ def create_webhooks():
     issues = gh.issues(filter='assigned', state='open')
 
     for issue in issues:
-        print(issue)
         # Does someone want us to add the webhook?
-        if issue.title.lower() == 'add webhook':
-            logging.info('Processing issue {}'.format(issue.url))
+        if issue.title.lower() not in ('add webhook', 'create webhook'):
+            return
 
-            # Make sure the user who filed the issue is an admin.
-            permission = github_helper.get_permission(
-                gh, issue.repository[0],
-                issue.repository[1],
-                issue.user.login)
+        logging.info('Processing issue {}'.format(issue.url))
 
-            if permission != 'admin':
-                logging.info(
-                    'Not installing webhook because {} is not an '
-                    'admin.'.format(issue.user.login))
-                return
+        # Make sure the user who filed the issue is an admin.
+        permission = github_helper.get_permission(
+            gh, issue.repository[0],
+            issue.repository[1],
+            issue.user.login)
 
-            # Make sure we're an admin.
-            repo = gh.repository(*issue.repository)
+        if permission != 'admin':
+            logging.info(
+                'Not installing webhook because {} is not an '
+                'admin.'.format(issue.user.login))
+            return
 
-            if not repo.permissions['admin']:
-                logging.info(
-                    'Not installing hook because depbot is not an admin')
-                # TODO: leave a comment?
-                return
+        # Make sure we're an admin.
+        repo = gh.repository(*issue.repository)
 
-            # Create the webhook.
-            try:
-                webhook_helper.create_webhook(repo.owner, repo.name)
-                issue.create_comment('Webhook added!')
-            except github3.exceptions.UnprocessableEntity:
-                # Webhook already exists
-                logging.info('Hook already existed.')
-                issue.create_comment('Webhook is already here!')
+        if not repo.permissions['admin']:
+            logging.info(
+                'Not installing hook because depbot is not an admin')
+            # TODO: leave a comment?
+            return
 
-            issue.close()
+        # Create the webhook.
+        try:
+            webhook_helper.create_webhook(repo.owner, repo.name)
+            issue.create_comment('Webhook added!')
+        except github3.exceptions.UnprocessableEntity:
+            # Webhook already exists
+            logging.info('Hook already existed.')
+            issue.create_comment('Webhook is already here!')
+
+        issue.close()

@@ -40,7 +40,7 @@ def check_for_auto_merge_trigger(text):
         comment = comment.group(1).strip()
 
     satisfaction = r'\b(pass|passes|green|approv(al|es)|happy|satisfied)'
-    ci_tool = r'\b(travis|tests|statuses)\b'
+    ci_tool = r'\b(travis|tests|statuses|kokoro|ci)\b'
     merge_action = r'\bmerge\b'
     triggers = (
         r'{}.+({}.+)?{}'.format(merge_action, ci_tool, satisfaction),
