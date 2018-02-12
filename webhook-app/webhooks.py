@@ -39,7 +39,7 @@ def check_for_auto_merge_trigger(text):
         # Just get the meat of the command
         comment = comment.group(1).strip()
 
-    satisfaction = r'\b(pass|passes|green|approv(al|es)|happy|satisfied)'
+    satisfaction = r'\b(pass|passes|green|approv(e|al|es|ed)|happy|satisfied)'
     ci_tool = r'\b(travis|tests|statuses|kokoro|ci)\b'
     merge_action = r'\bmerge\b'
     triggers = (
@@ -120,7 +120,7 @@ def commit_status_complete_merge_on_travis(data):
     # before it'll find the results.
     time.sleep(15)
 
-    query = '{} type:pr label:automerge status:success is:open repo:{}'.format(
+    query = '{} type:pr label:automerge is:open repo:{}'.format(
             commit_sha, data['repository']['full_name'])
     logging.info('Querying with: {}'.format(query))
     results = gh.search_issues(query=query)
