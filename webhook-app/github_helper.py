@@ -92,9 +92,9 @@ def get_pr_reviews(pr):
 def get_pr_required_statuses(pr):
     """Gets a list off all of the required statuses for a PR to be merged."""
     statuses = pr.session.get(
-        'https://api.github.com/repos/{}/branches/{}/protection/'
+        'https://api.github.com/repos/{}/{}/branches/{}/protection/'
         'required_status_checks/contexts'.format(
-            pr.repository, pr.base.ref)).json()
+            pr.repository[0], pr.repository[1], pr.base.ref)).json()
 
     return statuses
 
@@ -102,9 +102,9 @@ def get_pr_required_statuses(pr):
 def get_pr_statuses(pr):
     """Gets a list of currently reported statuses for the commit."""
     statuses = pr.session.get(
-        'https://api.github.com/repos/{}/commits/{}/'
+        'https://api.github.com/repos/{}/{}/commits/{}/'
         'statuses'.format(
-            pr.repository, pr.head.sha)).json()
+            pr.repository[0], pr.repository[1], pr.head.sha)).json()
 
     return [status['context'] for status in statuses]
 
