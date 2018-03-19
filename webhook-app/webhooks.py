@@ -183,6 +183,11 @@ def merge_pull_request(repo, pull, commit_sha=None):
         logging.info('Not merging {}, not labeled automerge'.format(pull))
         return
 
+    # only merge if all required status are reported
+    if not github_helper.has_required_statuses(pull):
+        logging.info('Not merging {}, missing required status')
+        return
+
     # only merge pulls that have all green statuses
     if not github_helper.is_sha_green(repo, commit_sha):
         logging.info('Not merging {}, not green.'.format(pull))
