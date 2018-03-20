@@ -185,7 +185,7 @@ def merge_pull_request(repo, pull, commit_sha=None):
 
     # only merge if all required status are reported
     if not github_helper.has_required_statuses(pull):
-        logging.info('Not merging {}, missing required status')
+        logging.info('Not merging {}, missing required status'.format(pull))
         return
 
     # only merge pulls that have all green statuses
