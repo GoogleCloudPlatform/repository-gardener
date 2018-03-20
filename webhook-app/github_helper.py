@@ -89,6 +89,39 @@ def get_pr_reviews(pr):
     return reviews
 
 
+def get_pr_required_statuses(pr):
+    """Gets a list off all of the required statuses for a PR to be merged."""
+    statuses = pr.session.get(
+        'https://api.github.com/repos/{}/{}/branches/{}/protection/'
+        'required_status_checks/contexts'.format(
+            pr.repository[0], pr.repository[1], pr.base.ref)).json()
+
+    return statuses
+
+
+def get_pr_statuses(pr):
+    """Gets a list of currently reported statuses for the commit."""
+    statuses = pr.session.get(
+        'https://api.github.com/repos/{}/{}/commits/{}/'
+        'statuses'.format(
+            pr.repository[0], pr.repository[1], pr.head.sha)).json()
+
+    return [status['context'] for status in statuses]
+
+
+def has_required_statuses(pr):
+    """Returns True if the PR has all the protected statuses present."""
+
+    required = get_pr_required_statuses(pr)
+
+    if not len(required):
+        return True
+
+    listed = get_pr_statuses(pr)
+
+    return set(required).issubset(set(listed))
+
+
 def is_pr_approved(pr):
     """True if the PR has been completely approved."""
     review_requests = get_pr_requested_reviewers(pr)
