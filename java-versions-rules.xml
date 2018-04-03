@@ -81,6 +81,13 @@ limitations under the License.
       </ignoreVersions>
     </rule>
 
+    <!-- AutoValue should not be automatically updated. -->
+    <rule groupId="com.google.auto.value" artifactId="auto-value" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
     <!-- Lock down Objectify for a while -->
     <rule groupId="com.googlecode.objectify" artifactId="objectify" comparisonMethod="maven">
       <ignoreVersions>
