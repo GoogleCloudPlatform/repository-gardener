@@ -61,7 +61,7 @@ set -e
 set -x
 
 # Install cocoapods
-gem install cocoapods
+gem install --user-install cocoapods
 
 # Install and uninstall pods to update Podfile.lock
 ./pod install --repo-update
