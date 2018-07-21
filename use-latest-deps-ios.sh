@@ -64,8 +64,8 @@ set -x
 gem install --user-install cocoapods
 
 # Install and uninstall pods to update Podfile.lock
-./pod install --repo-update
-./pod deintegrate
+pod install --repo-update
+pod deintegrate
 
 # If there were any changes, test them and then push and send a PR.
 set +e
