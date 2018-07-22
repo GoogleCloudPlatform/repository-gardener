@@ -64,8 +64,8 @@ set -x
 gem install --user-install cocoapods
 
 # Install and uninstall pods to update Podfile.lock
-pod install --repo-update
-pod deintegrate
+/home/kbuilder/.gem/ruby/2.4.0/bin/pod install --repo-update
+/home/kbuilder/.gem/ruby/2.4.0/bin/pod deintegrate
 
 # If there were any changes, test them and then push and send a PR.
 set +e
