@@ -63,14 +63,8 @@ set -x
 # Install cocoapods
 gem install --user-install cocoapods
 
-# Install and uninstall pods to update Podfile.lock
-for quickstart in abtesting admob analytics authentication config crashlytics crashreporting database dynamiclinks firestore functions invites messaging mlmodelinterpreter mlvision performance storage
-do
-  cd $quickstart
-  /home/kbuilder/.gem/ruby/2.4.0/bin/pod install --repo-update
-  /home/kbuilder/.gem/ruby/2.4.0/bin/pod deintegrate
-  cd ..
-done
+# Install and uninstall pods for each Podfile to update Podfile.lock
+find . -iname Podfile -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod update \; -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod deintegrate \;
 
 # If there were any changes, test them and then push and send a PR.
 set +e
