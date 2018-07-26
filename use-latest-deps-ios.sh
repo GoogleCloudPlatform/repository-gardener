@@ -66,6 +66,9 @@ gem install --user-install cocoapods
 # Install and uninstall pods for each Podfile to update Podfile.lock
 find . -iname Podfile -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod update \; -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod deintegrate \;
 
+# Find and update each Gemfile.lock
+find . -iname Gemfile.lock -execdir bundle update \;
+
 # If there were any changes, test them and then push and send a PR.
 set +e
 
