@@ -68,16 +68,16 @@ set -x
 set -e
 
 # Install the npm-check-updates package so we can use `ncu`.
-npm install -g npm-check-updates
+npm install npm-check-updates
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
 
 # Update dependencies in all package.json files.
 for file in $files; do
     if [[ "$REGEX" == 0 ]]; then
-      ncu -u -a --packageFile $file;
+      ./node_modules/.bin/ncu -u -a --packageFile $file;
     else
-      ncu -u -a -f $REGEX --packageFile $file;
+      ./node_modules/.bin/ncu -u -a -f $REGEX --packageFile $file;
     fi
 done
 
