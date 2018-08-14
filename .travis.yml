@@ -16,11 +16,7 @@ language: bash
 addons:
   apt:
     sources:
-    # Grab shellcheck from the Debian repo.
-    # https://github.com/koalaman/shellcheck/wiki/TravisCI
     - debian-sid
-    packages:
-    - shellcheck
 script: ./travis.sh
 branches:
   only:
