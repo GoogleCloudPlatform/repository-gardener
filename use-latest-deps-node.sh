@@ -59,7 +59,6 @@ if [[ "$1" != *"/"* ]] ; then
 fi
 REPO=$1
 
-
 # Get this script's directory.
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -67,20 +66,27 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 set -e
 
-# Install the npm-check-updates package so we can use `ncu`.
-npm install npm-check-updates
+# Install the npm-check-updates package so we can use `ncu`. It is insalled in
+# the parent directory to avoid polluting the repo's package.json file.
+npm --prefix ../ install npm-check-updates
+
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
 
 # Update dependencies in all package.json files.
 for file in $files; do
-    if [[ "$REGEX" == 0 ]]; then
-      ./node_modules/.bin/ncu -u -a --packageFile $file;
-    else
-      ./node_modules/.bin/ncu -u -a -f $REGEX --packageFile $file;
-    fi
-done
+  if [[ "$REGEX" == 0 ]]; then
+    ../node_modules/.bin/ncu -u -a --packageFile $file;
+  else
+    ../node_modules/.bin/ncu -u -a -f $REGEX --packageFile $file;
+  fi
 
+  # If the folder contains a package-lock.json file then run `npm install` to also update the lock file.
+  FILE_DIR=$(dirname "${file}")
+  if [ -f $FILE_DIR"/package-lock.json" ]; then
+    npm --prefix "$FILE_DIR" install --package-lock-only
+  fi
+done
 
 set +e
 if ! git diff --quiet; then
