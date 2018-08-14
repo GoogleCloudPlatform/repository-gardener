@@ -82,7 +82,7 @@ files=$(find . -name "*.html")
 
 # Replace strings in all index.html files.
 for file in $files; do
-  sed -i -e "s`${REGEX}`${NEW}`g" $file
+  sed -i -e "s|${REGEX}|${NEW}|g" "${file}"
 done
 
 
