@@ -76,14 +76,14 @@ files=$(find . -name "package.json" -not -path "**/node_modules/*")
 # Update dependencies in all package.json files.
 for file in $files; do
   if [[ "$REGEX" == 0 ]]; then
-    ../node_modules/.bin/ncu -u -a --packageFile $file;
+    ../node_modules/.bin/ncu -u -a --packageFile "${file}";
   else
-    ../node_modules/.bin/ncu -u -a -f $REGEX --packageFile $file;
+    ../node_modules/.bin/ncu -u -a -f "${REGEX}" --packageFile "${file}";
   fi
 
   # If the folder contains a package-lock.json file then run `npm install` to also update the lock file.
   FILE_DIR=$(dirname "${file}")
-  if [ -f $FILE_DIR"/package-lock.json" ]; then
+  if [ -f "${FILE_DIR}/package-lock.json" ]; then
     npm --prefix "$FILE_DIR" install --package-lock-only
   fi
 done
