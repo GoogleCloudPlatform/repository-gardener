@@ -24,7 +24,11 @@ mvn -v
 
 chmod +x *.sh
 
-./clone-and-checkout.sh "${DPEBOT_REPO}"
+if [[ -z ${DPEBOT_BRANCH+x} ]; then
+  ./clone-and-checkout.sh "${DPEBOT_REPO}"
+else
+  ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
+fi
 
 (
 cd repo-to-update

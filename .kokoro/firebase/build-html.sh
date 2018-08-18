@@ -14,7 +14,11 @@ export DPEBOT_GITHUB_TOKEN=$(cat ${KOKORO_GFILE_DIR}/${DPEBOT_GITHUB_TOKEN_FILE}
 
 chmod +x *.sh
 
-./clone-and-checkout.sh "${DPEBOT_REPO}"
+if [[ -z ${DPEBOT_BRANCH+x} ]; then
+  ./clone-and-checkout.sh "${DPEBOT_REPO}"
+else
+  ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
+fi
 
 # Get latest version of the Firebase SDK on NPM
 FIREBASE_SDK_INFO=$(npm view firebase --json)
