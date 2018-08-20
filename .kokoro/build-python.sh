@@ -17,7 +17,7 @@ sudo apt-get install -y libmysqlclient-dev
 
 chmod +x *.sh
 
-if [[ -z ${DPEBOT_BRANCH+x} ]; then
+if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
 else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
