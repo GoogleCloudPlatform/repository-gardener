@@ -4,9 +4,9 @@ import re
 
 # These will have to be updated manually over time, there's not an
 # easy way to determine the latest version.
-COMPILE_SDK_VERSION = 27
-TARGET_SDK_VERSION = 27
-BUILD_TOOLS_VERSION = '27.0.3'
+COMPILE_SDK_VERSION = 28
+TARGET_SDK_VERSION = 28
+BUILD_TOOLS_VERSION = '28.0.3'
 
 COMPILE_SDK_RE = r'compileSdkVersion[\s][\w]+'
 TARGET_SDK_RE = r'targetSdkVersion[\s][\w]+'
