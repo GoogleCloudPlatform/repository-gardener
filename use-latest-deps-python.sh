@@ -65,7 +65,7 @@ source env/bin/activate
 set -x
 set -e
 
-pip install --upgrade nox-automation
+pip install --upgrade nox
 nox -s check_requirements -- update
 
 
