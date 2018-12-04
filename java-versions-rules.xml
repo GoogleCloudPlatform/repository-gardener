@@ -95,6 +95,13 @@ limitations under the License.
       </ignoreVersions>
     </rule>
 
+    <!-- Apache Beam versions past 2.3.0 cause dataflow/spanner errors. -->
+    <rule groupId="org.apache.beam" artifactId="beam-sdks-java-core" comparisonMethod="maven">
+      <ignoreVersions>
+        <ignoreVersion type="regex">.*</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+
     <!-- SendGrid 3 libraries are broken in App Engine standard environment -->
     <rule groupId="com.sendgrid" artifactId="sendgrid-java" comparisonMethod="maven">
       <ignoreVersions>
