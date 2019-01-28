@@ -12,6 +12,13 @@ cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 # Kokoro exposes this as a file, but the scripts expect just a plain variable.
 export DPEBOT_GITHUB_TOKEN=$(cat ${KOKORO_GFILE_DIR}/${DPEBOT_GITHUB_TOKEN_FILE})
 
+# Install some extra packages needed by dotnet-docs-samples
+wget -q https://packages.microsoft.com/config/ubuntu/16.04/packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+sudo apt-get install apt-transport-https
+sudo apt-get update
+sudo apt-get install dotnet-sdk-2.2
+
 # Install dotnet-outdated
 dotnet tool install dotnet-outdated --tool-path $PWD
 export PATH=$PATH:$PWD
