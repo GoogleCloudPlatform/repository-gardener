@@ -69,20 +69,26 @@ set -e
 # Install the npm-check-updates package so we can use `ncu`. It is insalled in
 # the parent directory to avoid polluting the repo's package.json file.
 npm --prefix ../ install npm-check-updates
+NCU=$(pwd)/../node_modules/.bin/ncu
 
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
 
 # Update dependencies in all package.json files.
 for file in $files; do
+  FILE_DIR=$(dirname "${file}")
+
+  # Move into the file's directory and run ncu, this auto-detects
+  # the location of the package.json file and any .ncurc files
+  cd $FILE_DIR
   if [[ "$REGEX" == 0 ]]; then
-    ../node_modules/.bin/ncu -u -a --packageFile "${file}";
+    $NCU -u -a;
   else
-    ../node_modules/.bin/ncu -u -a -f "${REGEX}" --packageFile "${file}";
+    $NCU -u -a -f "${REGEX}";
   fi
+  cd -
 
   # If the folder contains a package-lock.json file then run `npm install` to also update the lock file.
-  FILE_DIR=$(dirname "${file}")
   if [ -f "${FILE_DIR}/package-lock.json" ]; then
     npm --prefix "$FILE_DIR" install --package-lock-only
   fi
