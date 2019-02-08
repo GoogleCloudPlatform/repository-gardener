@@ -66,10 +66,15 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 set -e
 
-# Install the npm-check-updates package so we can use `ncu`. It is insalled in
-# the parent directory to avoid polluting the repo's package.json file.
+# Install some tools we will use for updates:
+#  * yarn used for lockfile updates in some cases
+#  * npm-check-updates provides the `ncu` tool
+# Tools installed in the parent directory to avoid polluting the repo's 
+# package.json file.
 npm --prefix ../ install npm-check-updates
-NCU=$(pwd)/../node_modules/.bin/ncu
+npm --prefix ../ install yarn
+
+NODE_BIN=$(pwd)/../node_modules/.bin
 
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
@@ -83,18 +88,29 @@ for file in $files; do
   if [[ "$REGEX" == 0 ]]; then
     (
     cd "${FILE_DIR}"
-    $NCU -u -a;
+    $NODE_BIN/ncu -u -a;
     )
   else
     (
     cd "${FILE_DIR}"
-    $NCU -u -a -f "${REGEX}";
+    $NODE_BIN/ncu -u -a -f "${REGEX}";
     )
   fi
 
   # If the folder contains a package-lock.json file then run `npm install` to also update the lock file.
   if [ -f "${FILE_DIR}/package-lock.json" ]; then
-    npm --prefix "$FILE_DIR" install --package-lock-only
+    (
+    cd "${FILE_DIR}"   
+    npm install --package-lock-only
+    )
+  fi
+
+  # If the folder contains a yarn.lock file then run `yarn install` to also update the lock file.
+  if [ -f "${FILE_DIR}/yarn.lock" ]; then
+    (
+    cd "${FILE_DIR}"   
+    $NODE_BIN/yarn install --ignore-scripts --non-interactive
+    )
   fi
 done
 
