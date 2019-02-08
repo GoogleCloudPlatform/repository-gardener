@@ -80,13 +80,17 @@ for file in $files; do
 
   # Move into the file's directory and run ncu, this auto-detects
   # the location of the package.json file and any .ncurc files
-  cd $FILE_DIR
   if [[ "$REGEX" == 0 ]]; then
+    (
+    cd "${FILE_DIR}"
     $NCU -u -a;
+    )
   else
+    (
+    cd "${FILE_DIR}"
     $NCU -u -a -f "${REGEX}";
+    )
   fi
-  cd -
 
   # If the folder contains a package-lock.json file then run `npm install` to also update the lock file.
   if [ -f "${FILE_DIR}/package-lock.json" ]; then
