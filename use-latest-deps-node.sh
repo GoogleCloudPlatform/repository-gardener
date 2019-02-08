@@ -88,12 +88,12 @@ for file in $files; do
   if [[ "$REGEX" == 0 ]]; then
     (
     cd "${FILE_DIR}"
-    $NODE_BIN/ncu -u -a;
+    "${NODE_BIN}/ncu" -u -a;
     )
   else
     (
     cd "${FILE_DIR}"
-    $NODE_BIN/ncu -u -a -f "${REGEX}";
+    "${NODE_BIN}/ncu" -u -a -f "${REGEX}";
     )
   fi
 
@@ -109,7 +109,7 @@ for file in $files; do
   if [ -f "${FILE_DIR}/yarn.lock" ]; then
     (
     cd "${FILE_DIR}"   
-    $NODE_BIN/yarn install --ignore-scripts --non-interactive
+    "${NODE_BIN}/yarn" install --ignore-scripts --non-interactive
     )
   fi
 done
