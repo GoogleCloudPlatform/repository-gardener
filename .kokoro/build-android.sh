@@ -20,6 +20,9 @@ else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
+# Accept Android SDK Licenses
+echo -e "\n8933bad161af4178b1185d1a37fbf41ea5269c55\n24333f8a63b6825ea9c5514f83c2829b004d1fee" > "$ANDROID_HOME/licenses/android-sdk-license"
+
 (
 cd repo-to-update
 ../use-latest-deps-android.sh "${DPEBOT_REPO}"
