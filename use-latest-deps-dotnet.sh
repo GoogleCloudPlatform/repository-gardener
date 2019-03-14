@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Copyright 2018 Google LLC
 #
@@ -52,12 +52,10 @@ if [[ "$1" != *"/"* ]] ; then
 fi
 REPO=$1
 
-
 # Get this script's directory.
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-set -e
 set -x
 
 # Find list of all csproj files, then cycle through them updating version numbers.
@@ -69,7 +67,6 @@ done
 
 
 # If there were any changes, test them and then push and send a PR.
-set +e
 if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
     set -e
