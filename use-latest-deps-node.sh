@@ -71,7 +71,7 @@ set -e
 #  * npm-check-updates provides the `ncu` tool
 # Tools installed in the parent directory to avoid polluting the repo's 
 # package.json file.
-npm --prefix ../ install npm-check-updates
+npm --prefix ../ install npm-check-updates@2.15.0
 npm --prefix ../ install yarn
 
 NODE_BIN=$(pwd)/../node_modules/.bin
