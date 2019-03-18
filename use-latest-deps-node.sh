@@ -117,10 +117,10 @@ done
 set +e
 if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]]; then
+    set -e
     "${DIR}/commit-and-push.sh"
-  fi
-
-  if [[ "$DRYRUN" -eq 0 ]]; then
     "${DIR}/send-pr.sh" "$REPO"
   fi
+else
+  "No 'git diff', nothing to push."
 fi
