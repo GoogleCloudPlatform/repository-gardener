@@ -122,5 +122,5 @@ if ! git diff --quiet; then
     "${DIR}/send-pr.sh" "$REPO"
   fi
 else
-  "No 'git diff', nothing to push."
+  echo "No 'git diff', nothing to push."
 fi
