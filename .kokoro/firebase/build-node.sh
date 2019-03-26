@@ -22,6 +22,9 @@ fi
 
 (
 cd repo-to-update
-# Update Firebase Node dependencies only.
-../use-latest-deps-node.sh -p "/firebase.*/" "${DPEBOT_REPO}"
+if [ -z ${NODE_REGEX+x} ]; then
+  ../use-latest-deps-node.sh "${DPEBOT_REPO}"
+else
+  ../use-latest-deps-node.sh -p "${NODE_REGEX}" "${DPEBOT_REPO}"
+fi
 )
