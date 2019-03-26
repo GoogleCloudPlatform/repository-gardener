@@ -22,7 +22,7 @@ fi
 
 (
 cd repo-to-update
-if [[ -z "${NODE_REGEX}" ]]; then
+if [[ -z ${NODE_REGEX+x} ]]; then
   ../use-latest-deps-node.sh "${DPEBOT_REPO}"
 else
   ../use-latest-deps-node.sh -p "${NODE_REGEX}" "${DPEBOT_REPO}"
