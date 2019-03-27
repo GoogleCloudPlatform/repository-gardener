@@ -67,6 +67,8 @@ if [[ -z ${DPEBOT_GITHUB_TOKEN} ]] ; then
   exit 1
 fi
 
+# If the DPEBOT_BRANCH_BASE is not set, use master
+BASE_BRANCH=${DPEBOT_BRANCH_BASE:-master}
 
 git clone "https://dpebot:${DPEBOT_GITHUB_TOKEN}@github.com/${REPO}.git" repo-to-update
 (
@@ -74,7 +76,7 @@ cd repo-to-update || exit 1
 git config user.name "${DPEBOT_GIT_USER_NAME}"
 git config user.email "${DPEBOT_GIT_USER_EMAIL}"
 
-git branch "$BRANCH" origin/master
+git branch "$BRANCH" "origin/$BASE_BRANCH"
 git checkout "$BRANCH"
 )
 
