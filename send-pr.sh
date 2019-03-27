@@ -36,6 +36,9 @@ if [[ -z ${DPEBOT_GITHUB_TOKEN} ]] ; then
   exit 1
 fi
 
+# If the DPEBOT_BRANCH_BASE is not set, use master
+BASE_BRANCH=${DPEBOT_BRANCH_BASE:-master}
+
 # Get the current branch name.
 # http://stackoverflow.com/a/19585361/101923
 BRANCH=$(git symbolic-ref --short HEAD)
@@ -47,6 +50,6 @@ curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
 \"title\": \"Auto-update dependencies.\",
 \"body\": \"Brought to you by your friendly [Repository Gardener](https://github.com/GoogleCloudPlatform/repository-gardener).\",
 \"head\": \"${BRANCH}\",
-\"base\": \"master\" }" \
+\"base\": \"${BASE_BRANCH}\" }" \
   "https://api.github.com/repos/${REPO}/pulls"
 
