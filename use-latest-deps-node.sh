@@ -82,18 +82,19 @@ files=$(find . -name "package.json" -not -path "**/node_modules/*")
 # Update dependencies in all package.json files.
 for file in $files; do
   FILE_DIR=$(dirname "${file}")
+  FILE_BASE=$(basename "${file}")
 
   # Move into the file's directory and run ncu, this auto-detects
   # the location of the package.json file and any .ncurc files
   if [[ "$REGEX" == 0 ]]; then
     (
     cd "${FILE_DIR}"
-    "${NODE_BIN}/ncu" -u -a;
+    "${NODE_BIN}/ncu" -u -a --packageFile "${FILE_BASE}";
     )
   else
     (
     cd "${FILE_DIR}"
-    "${NODE_BIN}/ncu" -u -a -f "${REGEX}";
+    "${NODE_BIN}/ncu" -u -a -f "${REGEX}" --packageFile "${FILE_BASE}";
     )
   fi
 
