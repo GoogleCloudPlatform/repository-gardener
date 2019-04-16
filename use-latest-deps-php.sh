@@ -60,12 +60,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 set -e
 
-# Find all package.json files.
-files=$(find . -name "composer.json" -not -path "**/vendor/*")
+# Find all directories containing composer.json.
+directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirname {} \;)
 
-# Update dependencies in all package.json files.
-for file in $files; do
-  pushd $file
+# Update dependencies in all directories containing composer.json.
+for DIR in $directories; do
+  pushd $DIR
 
   OUTDATED=$(echo \
     "$(composer outdated 'google/*' --direct --format=json | jq '.installed') $(composer outdated 'firebase/*' --direct --format=json | jq '.installed')" \
