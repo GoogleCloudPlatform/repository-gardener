@@ -65,7 +65,7 @@ directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirnam
 
 # Update dependencies in all directories containing composer.json.
 for DIR in $directories; do
-  pushd $DIR
+  pushd "$DIR"
 
   OUTDATED=$(echo \
     "$(composer outdated 'google/*' --direct --format=json | jq '.installed') $(composer outdated 'firebase/*' --direct --format=json | jq '.installed')" \
@@ -73,16 +73,16 @@ for DIR in $directories; do
 
   if [[ "$OUTDATED" != "null" ]] ; then
     UPDATE_PACKAGES=""
-    count=$(echo $OUTDATED | jq length)
+    count=$(echo "$OUTDATED" | jq length)
 
-    for (( i = 0; i < $count; i++ ))
+    for (( i = 0; i < count; i++ ))
     do
-      name=$(echo $OUTDATED | jq -r --arg i "$i" '.[$i | tonumber].name')
-      version=$(echo $OUTDATED | jq -r --arg i "$i" '.[$i | tonumber].latest')
+      name=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].name')
+      version=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].latest')
       version="${version/v/}"
       UPDATE_PACKAGES="$UPDATE_PACKAGES $name:^$version"
     done
-    composer require --update-with-dependencies $UPDATE_PACKAGES
+    composer require --update-with-dependencies "$UPDATE_PACKAGES"
   fi
 
   popd
