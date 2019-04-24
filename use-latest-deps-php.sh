@@ -64,9 +64,9 @@ set -e
 directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirname {} \;)
 
 # Update dependencies in all directories containing composer.json.
-for DIR in $directories; do
-  printf '\n### Checking dependencies in %s ###\n', "$DIR"
-  pushd "$DIR"
+for SAMPLE_DIR in $directories; do
+  printf '\n### Checking dependencies in %s ###\n', "$SAMPLE_DIR"
+  pushd "$SAMPLE_DIR"
   composer install --ignore-platform-reqs --no-dev
 
   updatePackages=()
