@@ -65,7 +65,7 @@ directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirnam
 
 # Update dependencies in all directories containing composer.json.
 for DIR in $directories; do
-  printf '\n### Checking dependencies in %s ###\n', $DIR
+  printf '\n### Checking dependencies in %s ###\n', "$DIR"
   pushd "$DIR"
   composer install --ignore-platform-reqs --no-dev
 
@@ -74,7 +74,6 @@ for DIR in $directories; do
     | jq -s add)
 
   if [[ "$OUTDATED" != "null" ]] && [[ "$OUTDATED" != "[]" ]] ; then
-    UPDATE_PACKAGES=""
     count=$(echo "$OUTDATED" | jq length)
 
     for (( i = 0; i < count; i++ ))
@@ -82,12 +81,9 @@ for DIR in $directories; do
       name=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].name')
       version=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].latest' | sed -e 's/^v//')
       if [[ "${version:0:4}" != dev- ]]; then
-        UPDATE_PACKAGES="$name:^$version $UPDATE_PACKAGES"
+        composer require --ignore-platform-reqs --update-no-dev --update-with-dependencies "$name:^$version"
       fi
     done
-    if [ ! -z $UPDATE_PACKAGES ]; then
-      composer require --ignore-platform-reqs --update-no-dev --update-with-dependencies $UPDATE_PACKAGES
-    fi
   fi
 
   popd
