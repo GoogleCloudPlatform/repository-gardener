@@ -67,7 +67,7 @@ directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirnam
 for DIR in $directories; do
   printf '\n### Checking dependencies in %s ###\n', $DIR
   pushd "$DIR"
-  composer install --no-dev
+  composer install --ignore-platform-reqs --no-dev
 
   OUTDATED=$(echo \
     "$(composer outdated 'google/*' --direct --format=json | jq '.installed' 2>/dev/null) $(composer outdated 'firebase/*' --direct --format=json | jq '.installed' 2>/dev/null)" \
@@ -86,7 +86,7 @@ for DIR in $directories; do
       fi
     done
     if [ ! -z $UPDATE_PACKAGES ]; then
-      composer require --update-no-dev --update-with-dependencies $UPDATE_PACKAGES
+      composer require --ignore-platform-reqs --update-no-dev --update-with-dependencies $UPDATE_PACKAGES
     fi
   fi
 
