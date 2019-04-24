@@ -65,24 +65,29 @@ directories=$(find . -name "composer.json" -not -path "**/vendor/*" -exec dirnam
 
 # Update dependencies in all directories containing composer.json.
 for DIR in $directories; do
+  printf '\n### Checking dependencies in %s ###\n', $DIR
   pushd "$DIR"
+  composer install --no-dev
 
   OUTDATED=$(echo \
-    "$(composer outdated 'google/*' --direct --format=json | jq '.installed') $(composer outdated 'firebase/*' --direct --format=json | jq '.installed')" \
+    "$(composer outdated 'google/*' --direct --format=json | jq '.installed' 2>/dev/null) $(composer outdated 'firebase/*' --direct --format=json | jq '.installed' 2>/dev/null)" \
     | jq -s add)
 
-  if [[ "$OUTDATED" != "null" ]] ; then
+  if [[ "$OUTDATED" != "null" ]] && [[ "$OUTDATED" != "[]" ]] ; then
     UPDATE_PACKAGES=""
     count=$(echo "$OUTDATED" | jq length)
 
     for (( i = 0; i < count; i++ ))
     do
       name=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].name')
-      version=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].latest')
-      version="${version/v/}"
-      UPDATE_PACKAGES="$UPDATE_PACKAGES $name:^$version"
+      version=$(echo "$OUTDATED" | jq -r --arg i "$i" '.[$i | tonumber].latest' | sed -e 's/^v//')
+      if [[ "${version:0:4}" != dev- ]]; then
+        UPDATE_PACKAGES="$name:^$version $UPDATE_PACKAGES"
+      fi
     done
-    composer require --update-with-dependencies "$UPDATE_PACKAGES"
+    if [ ! -z $UPDATE_PACKAGES ]; then
+      composer require --update-no-dev --update-with-dependencies $UPDATE_PACKAGES
+    fi
   fi
 
   popd
