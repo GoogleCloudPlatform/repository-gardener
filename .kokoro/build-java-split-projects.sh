@@ -27,7 +27,7 @@ mvn -v
 chmod +x *.sh
 
 # Get the dpebot project root
-DPEBOT_ROOT=DIR="$(pwd)"
+DPEBOT_ROOT="$(pwd)"
 
 if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
