@@ -24,8 +24,8 @@ mvn -v
 
 chmod +x *.sh
 
-PROJ_ROOT=DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-echo $PROJ_ROOT
+# Get the dpebot project root
+DPEBOT_ROOT=DIR="$(pwd)"
 
 if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
@@ -33,7 +33,6 @@ else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
-cd "${DPEBOT_REPO}"
 REPO_ROOT=$(pwd)
 # Find projects by pom and use maven to find each one
 for file in **/pom.xml; do
@@ -43,7 +42,7 @@ for file in **/pom.xml; do
     cd "$file"
 
     # Update dependencies and plugins that use properties for version numbers.
-    RULES_URI="file://$PROJ_ROOT/java-versions-rules.xml"
+    RULES_URI="file://$DPEBOT_ROOT/java-versions-rules.xml"
     mvn -U versions:use-latest-releases "-Dmaven.version.rules=$RULES_URI"
     mvn -U versions:update-properties "-Dmaven.version.rules=$RULES_URI"
 
@@ -55,6 +54,6 @@ cd "$REPO_ROOT"
 set +e
 if ! git diff --quiet; then
     set -e
-    "${PROJ_ROOT}/commit-and-push.sh"
-    "${PROJ_ROOT}/send-pr.sh" "$REPO"
+    "${DPEBOT_ROOT}/commit-and-push.sh"
+    "${DPEBOT_ROOT}/send-pr.sh" "$REPO"
 fi
