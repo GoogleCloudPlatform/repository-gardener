@@ -34,7 +34,7 @@ fi
 ROOT=$(pwd)
 # Get this script's directory, then up one level
 # http://stackoverflow.com/a/246128/101923
-PROJ_ROOT="../$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJ_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
 # Find projects by pom and use maven to find each one
 for file in **/pom.xml; do
     cd "$ROOT"
