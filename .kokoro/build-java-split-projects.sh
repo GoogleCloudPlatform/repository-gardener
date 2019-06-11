@@ -24,7 +24,8 @@ mvn -v
 
 chmod +x *.sh
 
-PROJ_ROOT=$(pwd)
+PROJ_ROOT=DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+echo $PROJ_ROOT
 
 if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
