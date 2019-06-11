@@ -24,21 +24,19 @@ mvn -v
 
 chmod +x *.sh
 
+PROJ_ROOT=$(pwd)
+
 if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
 else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
-
-ROOT=$(pwd)
-# Get this script's directory, then up one level
-# http://stackoverflow.com/a/246128/101923
-echo $(pwd)
-PROJ_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+cd "${DPEBOT_REPO}"
+REPO_ROOT=$(pwd)
 # Find projects by pom and use maven to find each one
 for file in **/pom.xml; do
-    cd "$ROOT"
+    cd "$REPO_ROOT"
     # Navigate to the project folder.
     file=$(dirname "$file")
     cd "$file"
@@ -50,7 +48,7 @@ for file in **/pom.xml; do
 
 done
 
-cd "$ROOT"
+cd "$REPO_ROOT"
 
 # If there were any changes, test them and then push and send a PR.
 set +e
