@@ -2,6 +2,8 @@
 # Same as build-java, but works for repos that don't have a central pom
 
 set -eo pipefail
+# Enables `**` to include files nested inside sub-folders
+shopt -s globstar
 
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
