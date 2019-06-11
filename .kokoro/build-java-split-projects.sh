@@ -52,6 +52,9 @@ done
 
 cd "$REPO_ROOT"
 
+echo "Current dir: $(pwd)"
+echo "Dir contents: $(ls)"
+
 # If there were any changes, test them and then push and send a PR.
 set +e
 if ! git diff --quiet; then
