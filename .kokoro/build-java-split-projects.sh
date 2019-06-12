@@ -35,7 +35,7 @@ else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
-REPO_ROOT=$(pwd)
+REPO_ROOT="$(pwd)/repo-to-update"
 # Find projects by pom and use maven to find each one
 for file in **/pom.xml; do
     cd "$REPO_ROOT"
@@ -51,9 +51,6 @@ for file in **/pom.xml; do
 done
 
 cd "$REPO_ROOT"
-
-echo "Current dir: $(pwd)"
-echo "Dir contents: $(ls)"
 
 # If there were any changes, test them and then push and send a PR.
 set +e
