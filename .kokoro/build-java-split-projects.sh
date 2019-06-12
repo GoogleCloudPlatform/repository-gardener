@@ -2,6 +2,8 @@
 # Same as build-java, but works for repos that don't have a central pom
 
 set -eo pipefail
+# Enables `**` to include files nested inside sub-folders
+shopt -s globstar
 
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
@@ -24,37 +26,37 @@ mvn -v
 
 chmod +x *.sh
 
+# Get the dpebot project root
+DPEBOT_ROOT="$(pwd)"
+
 if [ -z ${DPEBOT_BRANCH+x} ]; then
   ./clone-and-checkout.sh "${DPEBOT_REPO}"
 else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
-
-ROOT=$(pwd)
-# Get this script's directory, then up one level
-# http://stackoverflow.com/a/246128/101923
-PROJ_ROOT="../$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "repo-to-update"
+REPO_ROOT="$(pwd)"
 # Find projects by pom and use maven to find each one
 for file in **/pom.xml; do
-    cd "$ROOT"
+    cd "$REPO_ROOT"
     # Navigate to the project folder.
     file=$(dirname "$file")
     cd "$file"
 
     # Update dependencies and plugins that use properties for version numbers.
-    RULES_URI="file://$PROJ_ROOT/java-versions-rules.xml"
+    RULES_URI="file://$DPEBOT_ROOT/java-versions-rules.xml"
     mvn -U versions:use-latest-releases "-Dmaven.version.rules=$RULES_URI"
     mvn -U versions:update-properties "-Dmaven.version.rules=$RULES_URI"
 
 done
 
-cd "$ROOT"
+cd "$REPO_ROOT"
 
 # If there were any changes, test them and then push and send a PR.
 set +e
 if ! git diff --quiet; then
     set -e
-    "${PROJ_ROOT}/commit-and-push.sh"
-    "${PROJ_ROOT}/send-pr.sh" "$REPO"
+    "${DPEBOT_ROOT}/commit-and-push.sh"
+    "${DPEBOT_ROOT}/send-pr.sh" "$DPEBOT_REPO"
 fi
