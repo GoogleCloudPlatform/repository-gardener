@@ -58,5 +58,5 @@ set +e
 if ! git diff --quiet; then
     set -e
     "${DPEBOT_ROOT}/commit-and-push.sh"
-    "${DPEBOT_ROOT}/send-pr.sh" "$REPO"
+    "${DPEBOT_ROOT}/send-pr.sh" "$DPEBOT_REPO"
 fi
