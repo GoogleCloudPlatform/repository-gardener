@@ -19,5 +19,5 @@
 BRANCH=$(git symbolic-ref --short HEAD)
 
 git commit -a -m "Auto-update dependencies."
-git push --force origin "$BRANCH"
+git push --force-with-lease origin "$BRANCH"
 
