@@ -8,23 +8,20 @@ running tests to ensure they still work, send a Pull Request for the update.
 
 ## Example
 
-The following commands will clone the java-docs-samples repository and update
+The following commands will clone the dotnet-docs-samples repository and update
 its dependencies to the latest versions.
-
-For Java, we need to also clone the `java-repo-tools` repository to get the
-latest version updater configuration.
 
 ```shell
 source set-env.sh \
-  && git clone https://github.com/GoogleCloudPlatform/java-repo-tools.git
-  && ./clone-and-checkout.sh -b dpebot-updatedeps GoogleCloudPlatform/java-docs-samples \
+  && git clone https://github.com/GoogleCloudPlatform/dotnet-repo-tools.git
+  && ./clone-and-checkout.sh -b dpebot-updatedeps GoogleCloudPlatform/dotnet-docs-samples \
   && ( \
     cd repo-to-update \
-    && ../use-latest-deps-java.sh -d GoogleCloudPlatform/java-docs-samples
+    && ../use-latest-deps-dotnet.sh -d GoogleCloudPlatform/dotnet-docs-samples
  )
 ```
 
-The `-d` option in `use-latest-deps-java.sh` is to do a dry run (don't commit
+The `-d` option in `use-latest-deps-dotnet.sh` is to do a dry run (don't commit
 or push). Remove `-d` to actually push and send PR.
 
 ## Contributing changes
