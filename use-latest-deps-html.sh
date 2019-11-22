@@ -16,7 +16,7 @@
 
 print_usage () {
   (>&2 echo "This script replaces strings matching a given regex with a given string in all HTML files.")
-  (>&2 echo "This is typically used to update JS dependencies inckuded using a <script> tag.")
+  (>&2 echo "This is typically used to update JS dependencies included using a <script> tag.")
   (>&2 echo "Usage:")
   (>&2 echo "    $0 [-d] regex new_string github-user/repository-name")
   (>&2 echo "Arguments:")
