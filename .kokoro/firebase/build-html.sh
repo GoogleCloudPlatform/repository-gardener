@@ -32,8 +32,10 @@ FIREBASEUI_VER=$(node -e "console.log(${FIREBASEUI_INFO}['dist-tags'].latest)")
 cd repo-to-update
 # Updating local/firebase hosing served Firebase SDK dependencies.
 ../use-latest-deps-html.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+../use-latest-deps-js.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
 # Updating CDN Firebase SDK dependencies.
 ../use-latest-deps-html.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+../use-latest-deps-js.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
 # Updating CDN FirebaseUI dependencies.
 ../use-latest-deps-html.sh "firebaseui/[0-9]*\.[0-9]*\.[0-9]*/" "firebaseui/${FIREBASEUI_VER}/" "${DPEBOT_REPO}"
 )
