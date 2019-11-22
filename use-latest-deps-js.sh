@@ -15,8 +15,9 @@
 # limitations under the License.
 
 print_usage () {
-  (>&2 echo "This script replaces strings matching a given regex with a given string in all HTML files.")
-  (>&2 echo "This is typically used to update JS dependencies included using a <script> tag.")
+  (>&2 echo "This script replaces strings matching a given regex with a given string in all JavaScript files.")
+  (>&2 echo "This is typically used to update JS dependencies included using an importScripts call in a ServiceWorker.")
+  (>&2 echo "This script ignores the node_modules folder.")
   (>&2 echo "Usage:")
   (>&2 echo "    $0 [-d] regex new_string github-user/repository-name")
   (>&2 echo "Arguments:")
@@ -77,10 +78,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 set -e
 
-# Find all html files.
-files=$(find . -name "*.html")
+# Find all js files that are NOT in "node_modules/".
+files=$(find . -name "*.js" -not -path "*node_modules/*")
 
-# Replace strings in all index.html files.
+# Replace strings in all js files.
 for file in $files; do
   sed -i -e "s|${REGEX}|${NEW}|g" "${file}"
 done
