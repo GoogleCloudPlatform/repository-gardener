@@ -21,7 +21,7 @@ print_usage () {
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
 }
 
-update_android_dependencies () {
+generate_dependencies_report () {
   variables_passed=$#
 
   if [ $variables_passed -gt 0 ]; then
@@ -29,44 +29,25 @@ update_android_dependencies () {
 
     (>&2 echo "=========================================================================")
     (>&2 echo "Push sample path to run gradle command locally (NEW PATH, PREVIOUS PATH):")
-
     pushd "$dir"
 
     # Generate JSON dependencies report
-    # TODO: Fix this
-    #./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
-    ./gradlew assembleDebug
+    ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
+
     gradle_exit_code="$?"
 
-    # General catchall error code.
-    fix_android_dependencies_exit_code=1
-
-    # Successful exit code means we can update the dependencies.
-    if [ $gradle_exit_code -eq 0 ]; then
-      fix_android_dependencies "${dir}"
-      fix_android_dependencies_exit_code="$?"
-    fi
-
     (>&2 echo "Pop sample path off stack, back to original path:")
-
     popd
 
-    if [ $gradle_exit_code -ne 0 ]; then
-      return $gradle_exit_code
+    return $gradle_exit_code
 
-    elif [ $fix_android_dependencies_exit_code -ne 0 ]; then
-      return $fix_android_dependencies_exit_code
-
-    else
-      return 0
-    fi
   else
     # Return invalid arguments exit code.
     return 128
   fi
 }
 
-fix_android_dependencies () {
+update_dependencies () {
   variables_passed=$#
 
   if [ $variables_passed -gt 0 ]; then
@@ -78,7 +59,7 @@ fix_android_dependencies () {
     source env/bin/activate
 
     # Run Android fixer script
-    python "${dir}/fix_android_dependencies.py"
+    python "${dir}/update_dependencies.py"
 
     # Remove the virtualenv
     rm -rf env
@@ -129,23 +110,27 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set +e
 set -x
 
-update_android_dependencies "${DIR}/"
-update_gradle_exit_code="$?"
+generate_dependencies_report "${DIR}/"
+generate_dependencies_report_exit_code="$?"
 
-# Gradle doesn't exist at root (127 means command not found), so we check all child folders for android/gradle projects.
-if [ $update_gradle_exit_code -eq 127 ]; then
-   (>&2 echo "No Gradle at root of repo, go one level deeper for samples.")
+# Gradle doesn't exist at root (127 means command not found), check all child folders for android/gradle projects.
+if [ $generate_dependencies_report_exit_code -eq 127 ]; then
+  (>&2 echo "No Gradle at root of repo, go one level deeper for samples.")
 
-   # Allows us to skip the loop if there aren't any folders.
-   shopt -s nullglob
+  # Allows us to skip the loop if there aren't any folders.
+  shopt -s nullglob
 
-   array=(*/)
+  # Generate list of folders in current directory.
+  child_dirs=(*/)
 
-   for child_dir in "${array[@]}"
-   do
-     update_android_dependencies "${DIR}/${child_dir}"
-   done
+  for child_dir in "${child_dirs[@]}"
+    do
+      generate_dependencies_report "${DIR}/${child_dir}"
+    done
 fi
+
+set -e
+update_dependencies "${DIR}"
 
 # If there were any changes, test them and then push and send a PR.
 if ! git diff --quiet; then
