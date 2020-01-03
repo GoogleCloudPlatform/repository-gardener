@@ -24,7 +24,7 @@ GROUPS_ALLOWED_MAJOR_UPDATE = [
 #
 # Must run this command:
 # $ ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
-RELATIVE_PATH_TO_JSON_REPORT = '/build/dependencyUpdates/report.json'
+RELATIVE_PATH_TO_JSON_REPORT = 'build/dependencyUpdates/report.json'
 
 def find_gradle_files():
     """Finds all build.gradle files, recursively."""
@@ -113,7 +113,7 @@ def update_all():
     project_root = os.getcwd()
     print 'Repo root: {}'.format(project_root)
 
-    top_level_report = project_root + RELATIVE_PATH_TO_JSON_REPORT
+    top_level_report = os.path.join(project_root, RELATIVE_PATH_TO_JSON_REPORT)
 
     if os.path.exists(top_level_report):
         print 'Update dependencies via top-level report'
@@ -125,7 +125,7 @@ def update_all():
 
         for subdirectory in first_level_subdirectories:
             print 'subdirectory: {}'.format(subdirectory)
-            subdirectory_report = project_root + subdirectory + RELATIVE_PATH_TO_JSON_REPORT
+            subdirectory_report = os.path.join(project_root, subdirectory, RELATIVE_PATH_TO_JSON_REPORT)
 
             if os.path.exists(subdirectory_report):
                 print '\tUpdate dependencies in subdirectory'
