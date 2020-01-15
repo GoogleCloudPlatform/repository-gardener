@@ -21,6 +21,56 @@ print_usage () {
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
 }
 
+generate_dependencies_report () {
+  variables_passed=$#
+
+  if [ $variables_passed -gt 0 ]; then
+    dir=$1
+
+    (>&2 echo "=========================================================================")
+    (>&2 echo "Push sample path to run gradle command locally (NEW PATH, PREVIOUS PATH):")
+    pushd "$dir"
+
+    # Generate JSON dependencies report
+    ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
+
+    gradle_exit_code="$?"
+
+    (>&2 echo "Pop sample path off stack, back to original path:")
+    popd
+
+    return $gradle_exit_code
+
+  else
+    # Return invalid arguments exit code.
+    return 128
+  fi
+}
+
+update_dependencies () {
+  variables_passed=$#
+
+  if [ $variables_passed -gt 0 ]; then
+    dir=$1
+
+    # Activate a virtualenv
+    virtualenv --python python2.7 env
+    # shellcheck disable=SC1091
+    source env/bin/activate
+
+    # Run Android fixer script
+    python "${dir}/update_dependencies.py"
+
+    # Remove the virtualenv
+    rm -rf env
+
+    return 0
+  else
+    # Return invalid arguments exit code.
+    return 128
+  fi
+}
+
 # Check for optional arguments.
 DRYRUN=0
 while getopts :d opt; do
@@ -57,26 +107,32 @@ REPO=$1
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-set -e
+set +e
 set -x
 
-# Generate JSON dependencies report
-./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
+generate_dependencies_report "${DIR}/"
+generate_dependencies_report_exit_code="$?"
 
-# Activate a virtualenv
-virtualenv --python python2.7 env
-# shellcheck disable=SC1091
-source env/bin/activate
+# Gradle doesn't exist at root (127 means command not found), check all child folders for android/gradle projects.
+if [ $generate_dependencies_report_exit_code -eq 127 ]; then
+  (>&2 echo "No Gradle at root of repo, go one level deeper for samples.")
 
-# Run Android fixer script
-python "${DIR}/fix_android_dependencies.py"
+  # Allows us to skip the loop if there aren't any folders.
+  shopt -s nullglob
 
-# Remove the virtualenv
-rm -rf env
+  # Generate list of folders in current directory.
+  child_dirs=(*/)
+
+  for child_dir in "${child_dirs[@]}"
+    do
+      generate_dependencies_report "${DIR}/${child_dir}"
+    done
+fi
+
+set -e
+update_dependencies "${DIR}"
 
 # If there were any changes, test them and then push and send a PR.
-set +e
-
 if ! git diff --quiet; then
   if [[ "$DRYRUN" -eq 0 ]] ; then
     set -e

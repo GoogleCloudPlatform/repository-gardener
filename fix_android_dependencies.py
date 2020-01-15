@@ -6,13 +6,14 @@ import re
 # easy way to determine the latest version.
 COMPILE_SDK_VERSION = 29
 TARGET_SDK_VERSION = 29
-BUILD_TOOLS_VERSION = '29.0.0'
+BUILD_TOOLS_VERSION = '29.0.2'
 
 COMPILE_SDK_RE = r'compileSdkVersion[\s][\w]+'
 TARGET_SDK_RE = r'targetSdkVersion[\s][\w]+'
 BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"\w\.]+'
 
 GROUPS_ALLOWED_MAJOR_UPDATE = [
+  'androidx',
   'com.google.android.gms',
   'com.google.firebase',
   'com.android.support',
@@ -23,7 +24,7 @@ GROUPS_ALLOWED_MAJOR_UPDATE = [
 #
 # Must run this command:
 # $ ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
-INPUT_JSON = 'build/dependencyUpdates/report.json'
+RELATIVE_PATH_TO_JSON_REPORT = 'build/dependencyUpdates/report.json'
 
 def find_gradle_files():
     """Finds all build.gradle files, recursively."""
@@ -56,10 +57,10 @@ def is_major_update(old_version, new_version):
 
     return old_major != new_major
 
-def get_dep_replacements():
+def get_dep_replacements(json_file):
     """Gets a dictionary of all dependency replacements to be made."""
     replacements = {}
-    with open(INPUT_JSON, 'r') as f:
+    with open(json_file, 'r') as f:
         json_data = json.loads(f.read())
 
         outdated_deps = json_data['outdated']['dependencies']
@@ -70,10 +71,9 @@ def get_dep_replacements():
             curr_version = dep['version']
             new_version = dep['available']['release']
 
-            if (is_major_update(curr_version, new_version) and
-                group not in GROUPS_ALLOWED_MAJOR_UPDATE):
-              print 'Skipping major update to {}:{}'.format(group, name)
-              continue
+            if (is_major_update(curr_version, new_version) and group not in GROUPS_ALLOWED_MAJOR_UPDATE):
+                print 'Skipping major update to {}:{}'.format(group, name)
+                continue
 
             curr_dep = '{}:{}:{}'.format(group, name, curr_version)
             new_dep = '{}:{}:{}'.format(group, name, new_version)
@@ -81,11 +81,11 @@ def get_dep_replacements():
 
     return replacements
 
-def update_all():
-    """Runs through all build.gradle files and performs replacements."""
+def update_project(project_path):
+    """Runs through all build.gradle files and performs replacements for individual android project."""
     replacements = {}
     replacements.update(get_android_replacements())
-    replacements.update(get_dep_replacements())
+    replacements.update(get_dep_replacements(project_path))
 
     # Print all updates found
     print 'Dependency updates:'
@@ -107,5 +107,35 @@ def update_all():
         with open(gradle_file, 'w') as f:
             f.write(new_data)
 
+def update_all():
+    """Runs through all build.gradle files and performs replacements."""
+
+    project_root = os.getcwd()
+    print 'Repo root: {}'.format(project_root)
+
+    top_level_report = os.path.join(project_root, RELATIVE_PATH_TO_JSON_REPORT)
+
+    if os.path.exists(top_level_report):
+        print 'Update dependencies via top-level report'
+        update_project(top_level_report)
+    else:
+        print 'Update dependencies via child-level report(s)'
+        first_level_subdirectories = get_immediate_subdirectories(project_root)
+        print 'List of subdirectories: {}'.format(first_level_subdirectories)
+
+        for subdirectory in first_level_subdirectories:
+            print 'subdirectory: {}'.format(subdirectory)
+            subdirectory_report = os.path.join(project_root, subdirectory, RELATIVE_PATH_TO_JSON_REPORT)
+
+            if os.path.exists(subdirectory_report):
+                print '\tUpdate dependencies in subdirectory'
+                update_project(subdirectory_report)
+            else:
+                print '\tNo report in subdirectory'
+
+def get_immediate_subdirectories(directory):
+    return [name for name in os.listdir(directory)
+            if os.path.isdir(os.path.join(directory, name)) and not name.startswith('.')]
+
 if __name__ == '__main__':
-  update_all()
+    update_all()
