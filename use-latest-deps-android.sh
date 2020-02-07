@@ -59,7 +59,7 @@ update_dependencies () {
     source env/bin/activate
 
     # Run Android fixer script
-    python "${dir}/update_dependencies.py"
+    python "${dir}/fix_android_dependencies.py"
 
     # Remove the virtualenv
     rm -rf env
