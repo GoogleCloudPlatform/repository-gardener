@@ -12,14 +12,6 @@ COMPILE_SDK_RE = r'compileSdkVersion[\s][\w]+'
 TARGET_SDK_RE = r'targetSdkVersion[\s][\w]+'
 BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"\w\.]+'
 
-GROUPS_ALLOWED_MAJOR_UPDATE = [
-  'androidx',
-  'com.google.android.gms',
-  'com.google.firebase',
-  'com.android.support',
-  'com.android.support.test'
-]
-
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
 #
 # Must run this command:
@@ -70,10 +62,6 @@ def get_dep_replacements(json_file):
 
             curr_version = dep['version']
             new_version = dep['available']['release']
-
-            if (is_major_update(curr_version, new_version) and group not in GROUPS_ALLOWED_MAJOR_UPDATE):
-                print 'Skipping major update to {}:{}'.format(group, name)
-                continue
 
             curr_dep = '{}:{}:{}'.format(group, name, curr_version)
             new_dep = '{}:{}:{}'.format(group, name, new_version)
