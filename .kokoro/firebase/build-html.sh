@@ -21,7 +21,7 @@ else
 fi
 
 # Update npm itself
-npm install -g npm@latest
+sudo npm install -g npm@latest
 
 # Get latest version of the Firebase SDK on NPM
 FIREBASE_SDK_INFO=$(npm view firebase --json)
