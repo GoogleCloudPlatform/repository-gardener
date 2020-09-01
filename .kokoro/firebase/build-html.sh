@@ -20,6 +20,9 @@ else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
+# Update npm itself
+sudo npm install -g npm@latest
+
 # Get latest version of the Firebase SDK on NPM
 FIREBASE_SDK_INFO=$(npm view firebase --json)
 FIREBASE_SDK_VER=$(node -e "console.log(${FIREBASE_SDK_INFO}['dist-tags'].latest)")
