@@ -27,10 +27,10 @@ sudo apt-get install -y jq
 sudo npm install -g npm@latest
 
 # Get latest version of the Firebase SDK on NPM
-FIREBASE_SDK_VER=$(npm view firebase --json | jq -r '.["dist-tags"].latest')
+FIREBASE_SDK_VER=$(npm view firebase@latest version')
 
 # Get latest version of FirebaseUI on NPM
-FIREBASEUI_VER=$(npm view firebaseui --json | jq -r '.["dist-tags"].latest')
+FIREBASEUI_VER=$(npm view firebaseui@latest version')
 
 (
 cd repo-to-update
