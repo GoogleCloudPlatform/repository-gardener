@@ -8,3 +8,13 @@ runtime_config:
 env_variables:
   # Required for requests to be able to verify googleapis.com certificates.
   REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+
+# https://cloud.google.com/appengine/docs/flexible/python/migrating-to-split-health-checks
+#featureSettings:
+#  splitHealthChecks: true
+
+liveness_check:
+  path: "/"
+
+readiness_check:
+  path: "/"
