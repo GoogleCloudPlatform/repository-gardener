@@ -39,7 +39,7 @@ while getopts p:d opt; do
     \?)
       (>&2 echo "Got invalid option -$OPTARG.")
       print_usage
-      exit 1 
+      exit 1
       ;;
   esac
 done
@@ -79,9 +79,8 @@ npm --prefix ../ install n
 
 NODE_BIN=$(pwd)/../node_modules/.bin
 
-# Create a directory for 'n'
-export N_PREFIX=$(realpath ../n)
-mkdir "${N_PREFIX}"
+# Choose a prefix directory for 'n'
+export N_PREFIX=$(realpath ../)
 
 # Install Node 12
 "${NODE_BIN}/n" 12
