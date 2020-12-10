@@ -79,9 +79,11 @@ npm --prefix ../ install n
 
 NODE_BIN=$(pwd)/../node_modules/.bin
 
-# Install Node 12
-N_PREFIX="../n"
+# Create a directory for 'n'
+export N_PREFIX="../n"
 mkdir "${N_PREFIX}"
+
+# Install Node 12
 "${NODE_BIN}/n" 12
 
 # Check node version
