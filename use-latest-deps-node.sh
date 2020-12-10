@@ -73,15 +73,17 @@ npm --prefix ../ install n
 NODE_BIN=$(pwd)/../node_modules/.bin
 
 # Choose a prefix directory for 'n'
-export N_PREFIX=$(realpath ../)
+N_PREFIX=$(realpath ../)
+export N_PREFIX
 
 # Install Node
 DPEBOT_NODE_VERSION="${DPEBOT_NODE_VERSION:-10}"
-"${NODE_BIN}/n" $DPEBOT_NODE_VERSION
+"${NODE_BIN}/n" "${DPEBOT_NODE_VERSION}"
 
-# Add Node 12 to path
-NODE_PATH=$($NODE_BIN/n which $DPEBOT_NODE_VERSION)
-export PATH="$(dirname $NODE_PATH):${PATH}"
+# Add Node to path
+NODE_PATH=$("${NODE_BIN}/n" which "${DPEBOT_NODE_VERSION}")
+PATH="$(dirname $NODE_PATH):${PATH}"
+export PATH
 
 # Check node version
 node --version
