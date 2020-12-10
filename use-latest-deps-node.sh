@@ -82,7 +82,7 @@ DPEBOT_NODE_VERSION="${DPEBOT_NODE_VERSION:-10}"
 
 # Add Node to path
 NODE_PATH=$("${NODE_BIN}/n" which "${DPEBOT_NODE_VERSION}")
-PATH="$(dirname $NODE_PATH):${PATH}"
+PATH="$(dirname "${NODE_PATH}"):${PATH}"
 export PATH
 
 # Check node version
