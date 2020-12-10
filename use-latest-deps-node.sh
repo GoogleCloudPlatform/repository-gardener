@@ -67,15 +67,23 @@ set -x
 set -e
 
 # Install some tools we will use for updates:
-#  * yarn used for lockfile updates in some cases
-#  * npm-check-updates provides the `ncu` tool
+#  * yarn: used for lockfile updates in some cases
+#  * npm-check-updates: provides the `ncu` tool
+#  * n: used to switch Node versions
 # Tools installed in the parent directory to avoid polluting the repo's 
 # package.json file.
 sudo npm install -g npm@latest
 npm --prefix ../ install npm-check-updates@2.15.0
 npm --prefix ../ install yarn
+npm --prefix ../ install n
 
 NODE_BIN=$(pwd)/../node_modules/.bin
+
+# Install Node 12
+"${NODE_BIN}/n" 12
+
+# Check node version
+node --version
 
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
