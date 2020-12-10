@@ -75,8 +75,8 @@ NODE_BIN=$(pwd)/../node_modules/.bin
 # Choose a prefix directory for 'n'
 export N_PREFIX=$(realpath ../)
 
-# Install Node 12
-"${NODE_BIN}/n" 12
+# Install Node 10
+"${NODE_BIN}/n" 10
 
 # Add Node 12 to path
 NODE_PATH=$($NODE_BIN/n which 12)
