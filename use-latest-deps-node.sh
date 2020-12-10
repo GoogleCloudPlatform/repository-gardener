@@ -75,11 +75,12 @@ NODE_BIN=$(pwd)/../node_modules/.bin
 # Choose a prefix directory for 'n'
 export N_PREFIX=$(realpath ../)
 
-# Install Node 10
-"${NODE_BIN}/n" 10
+# Install Node
+DPEBOT_NODE_VERSION="${DPEBOT_NODE_VERSION:-10}"
+"${NODE_BIN}/n" $DPEBOT_NODE_VERSION
 
 # Add Node 12 to path
-NODE_PATH=$($NODE_BIN/n which 12)
+NODE_PATH=$($NODE_BIN/n which $DPEBOT_NODE_VERSION)
 export PATH="$(dirname $NODE_PATH):${PATH}"
 
 # Check node version
