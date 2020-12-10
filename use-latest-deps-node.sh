@@ -83,9 +83,12 @@ NODE_BIN=$(pwd)/../node_modules/.bin
 export N_PREFIX="../n"
 mkdir "${N_PREFIX}"
 
-# Install Node 12 and add to PATH
+# Install Node 12
 "${NODE_BIN}/n" 12
-export PATH="$(dirname $(n which 12)):${PATH}"
+
+# Add Node 12 to path
+NODE_PATH=$($NODE_BIN/n which 12)
+export PATH="$(dirname $NODE_PATH):${PATH}"
 
 # Check node version
 node --version
