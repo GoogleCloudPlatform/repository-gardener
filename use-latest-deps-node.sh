@@ -66,16 +66,36 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -x
 set -e
 
+# Tools installed in the parent directory to avoid polluting the repo's 
+# package.json file.
+npm --prefix ../ install n
+
+NODE_BIN=$(pwd)/../node_modules/.bin
+
+# Choose a prefix directory for 'n'
+N_PREFIX=$(realpath ../)
+export N_PREFIX
+
+# Install Node
+DPEBOT_NODE_VERSION="${DPEBOT_NODE_VERSION:-10}"
+"${NODE_BIN}/n" "${DPEBOT_NODE_VERSION}"
+
+# Add Node to path
+NODE_PATH=$("${NODE_BIN}/n" which "${DPEBOT_NODE_VERSION}")
+PATH="$(dirname "${NODE_PATH}"):${PATH}"
+export PATH
+
+# Check node version
+node --version
+
 # Install some tools we will use for updates:
-#  * yarn used for lockfile updates in some cases
-#  * npm-check-updates provides the `ncu` tool
+#  * yarn: used for lockfile updates in some cases
+#  * npm-check-updates: provides the `ncu` tool
 # Tools installed in the parent directory to avoid polluting the repo's 
 # package.json file.
 sudo npm install -g npm@latest
 npm --prefix ../ install npm-check-updates@2.15.0
 npm --prefix ../ install yarn
-
-NODE_BIN=$(pwd)/../node_modules/.bin
 
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
