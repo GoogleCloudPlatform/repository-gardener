@@ -57,6 +57,8 @@ PR_JSON=$(curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
 \"base\": \"${BASE_BRANCH}\" }" \
   "https://api.github.com/repos/${REPO}/pulls")
 
+echo "${PR_JSON}"
+
 # Label the pull request (if required)
 if [[ ! -z "${DPEBOT_GITHUB_LABEL}" ]] ; then
   PR_NUMBER=$(echo "${PR_JSON}" | jq .number)
