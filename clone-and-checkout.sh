@@ -19,9 +19,10 @@ print_usage() {
   (>&2 echo "    $0 [-b branch-name] github-user/repository")
 }
 
+# If the DPEBOT_BRANCH_HEAD is not set, use dpebot-repositorygardener
+BRANCH=${DPEBOT_BRANCH_HEAD:-dpebot-repositorygardener}
 
 # Check for optional arguments.
-BRANCH="dpebot-repositorygardener"
 while getopts :b: opt; do
   case $opt in
     b)
