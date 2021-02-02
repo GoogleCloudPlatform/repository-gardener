@@ -24,7 +24,7 @@ print_usage () {
 generate_dependencies_report () {
   variables_passed=$#
 
-  if [ $variables_passed -gt 0 ]; then
+  if [ "${variables_passed}" -gt 0 ]; then
     dir=$1
 
     (>&2 echo "=========================================================================")
@@ -50,7 +50,7 @@ generate_dependencies_report () {
 update_dependencies () {
   variables_passed=$#
 
-  if [ $variables_passed -gt 0 ]; then
+  if [ "${variables_passed}" -gt 0 ]; then
     dir=$1
 
     # Activate a virtualenv
