@@ -1,6 +1,6 @@
 # Repository Gardener
 
-[![Build Status](https://travis-ci.org/GoogleCloudPlatform/repository-gardener.svg)](https://travis-ci.org/GoogleCloudPlatform/repository-gardener)
+[![Actions Status][gh-actions-badge]][gh-actions]
 
 The repository gardener maintains code samples by running some automatable
 tasks. For example, it can automatically update dependencies and then after
@@ -42,3 +42,6 @@ This is not an official Google product or sample.
 ## Adding the bot to your repository (Googlers only)
 
 A hosted version of the bot is [available](https://goto.google.com/dpebot) for Googlers.
+
+[gh-actions]: https://github.com/GoogleCloudPlatform/repository-gardener/actions
+[gh-actions-badge]: https://github.com/GoogleCloudPlatform/repository-gardener/workflows/CI%20Tests/badge.svg
