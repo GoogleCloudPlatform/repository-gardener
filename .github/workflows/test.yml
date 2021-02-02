@@ -1,0 +1,15 @@
+name: CI Tests
+
+on:
+  - pull_request
+  - push
+
+env:
+  CI: true
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Scripts
+        run: ./check.sh
