@@ -60,8 +60,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 set -x
 
-# Install Ruby
+# Install RVM
+curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
+curl -sSL https://get.rvm.io | bash -s stable --ruby
 source "${HOME}/.rvm/scripts/rvm"
+
+# Install Ruby
 rvm install 2.3.3
 rvm use 2.3.3
 
