@@ -60,14 +60,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 set -x
 
-# Install RVM
-curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
-source "${HOME}/.rvm/scripts/rvm"
-
 # Install Ruby
-rvm install 2.3.3
-rvm use 2.3.3
+sudo apt-get install ruby-full
+which ruby
+ruby -v
 
 # Install cocoapods
 gem install --user-install cocoapods
