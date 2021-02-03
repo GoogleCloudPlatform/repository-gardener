@@ -60,6 +60,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 set -e
 set -x
 
+# Install Ruby
+rvm install 2.3.3
+rvm use 2.3.3
+
 # Install cocoapods
 gem install --user-install cocoapods
 
