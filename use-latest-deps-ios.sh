@@ -61,6 +61,7 @@ set -e
 set -x
 
 # Install Ruby
+# shellcheck disable=SC1091
 source /etc/profile.d/rvm.sh
 rvm install 2.3.3
 rvm use 2.3.3
