@@ -61,7 +61,7 @@ set -e
 set -x
 
 # Install Ruby
-sudo apt-get install ruby-full
+sudo apt-get install -y ruby-full
 which ruby
 ruby -v
 
