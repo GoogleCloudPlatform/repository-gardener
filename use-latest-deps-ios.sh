@@ -62,7 +62,7 @@ set -x
 
 # Install RVM
 curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
-curl -sSL https://get.rvm.io | bash -s stable --ruby
+curl -sSL https://get.rvm.io | sudo bash -s stable --ruby
 source "${HOME}/.rvm/scripts/rvm"
 
 # Install Ruby
