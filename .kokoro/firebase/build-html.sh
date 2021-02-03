@@ -24,7 +24,7 @@ fi
 sudo apt-get install -y jq
 
 # Update npm itself
-sudo npm install -g npm@latest
+sudo npm install -g npm@6.14.11
 
 # Get latest version of the Firebase SDK on NPM
 FIREBASE_SDK_VER=$(npm view firebase --json | jq -r '.["dist-tags"].latest')
