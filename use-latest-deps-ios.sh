@@ -61,9 +61,9 @@ set -e
 set -x
 
 # Install Ruby
-sudo apt-get install -y ruby-full
-which ruby
-ruby -v
+source /etc/profile.d/rvm.sh
+rvm install 2.3.3
+rvm use 2.3.3
 
 # Install cocoapods
 gem install --user-install cocoapods
