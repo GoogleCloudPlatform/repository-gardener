@@ -77,6 +77,9 @@ find . -iname Gemfile.lock -execdir bundle update \;
 # Install and uninstall pods for each Podfile to update Podfile.lock
 find . -iname Podfile -execdir pod update \; -execdir pod deintegrate \;
 
+# Firestore doesn't seem to be updated by the find-execdir combo.
+pushd firestore; pod update; pod deintegrate; popd;
+
 # If there were any changes, test them and then push and send a PR.
 set +e
 
