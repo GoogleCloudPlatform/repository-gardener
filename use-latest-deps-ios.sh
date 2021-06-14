@@ -74,10 +74,6 @@ gem install cocoapods
 # Update pod source
 pod repo update
 
-# Make sure correct sed is used
-# https://github.com/firebase/quickstart-ios/issues/1099
-brew install sed
-
 # Find and update each Gemfile.lock
 find . -iname Gemfile.lock -execdir bundle update \;
 
