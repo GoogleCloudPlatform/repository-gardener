@@ -36,6 +36,9 @@ if [[ -z ${DPEBOT_GITHUB_TOKEN} ]] ; then
   exit 1
 fi
 
+# Get jq for JSON parsing
+sudo apt-get install -y jq
+
 # If the DPEBOT_BRANCH_BASE is not set, use master
 BASE_BRANCH=${DPEBOT_BRANCH_BASE:-master}
 
@@ -43,7 +46,8 @@ BASE_BRANCH=${DPEBOT_BRANCH_BASE:-master}
 # http://stackoverflow.com/a/19585361/101923
 BRANCH=$(git symbolic-ref --short HEAD)
 
-curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
+# Create the pull request
+PR_JSON=$(curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
   -X POST \
   -H "Content-Type: application/json" \
   -d "{
@@ -51,5 +55,17 @@ curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
 \"body\": \"Brought to you by your friendly [Repository Gardener](https://github.com/GoogleCloudPlatform/repository-gardener).\",
 \"head\": \"${BRANCH}\",
 \"base\": \"${BASE_BRANCH}\" }" \
-  "https://api.github.com/repos/${REPO}/pulls"
+  "https://api.github.com/repos/${REPO}/pulls")
 
+# Label the pull request (if required)
+if [[ -n "${DPEBOT_GITHUB_LABEL}" ]] ; then
+  PR_NUMBER=$(echo "${PR_JSON}" | jq .number)
+  echo "Adding label ${DPEBOT_GITHUB_LABEL} to PR ${PR_NUMBER}"
+
+  curl -u "dpebot:${DPEBOT_GITHUB_TOKEN}" \
+    -X POST \
+    -H "Content-Type: application/json" \
+    -d "{
+    \"labels\": [\"${DPEBOT_GITHUB_LABEL}\"] }" \
+      "https://api.github.com/repos/${REPO}/issues/${PR_NUMBER}/labels"
+fi

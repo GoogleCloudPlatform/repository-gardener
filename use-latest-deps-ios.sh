@@ -59,15 +59,26 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 set -e
 set -x
+set -o pipefail
 
-# Install cocoapods
-gem install --user-install cocoapods
+# Install Ruby
+# shellcheck disable=SC1091
+source /etc/profile.d/rvm.sh
+rvm install 2.6.0
+rvm use 2.6.0
 
-# Install and uninstall pods for each Podfile to update Podfile.lock
-find . -iname Podfile -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod update \; -execdir /home/kbuilder/.gem/ruby/2.4.0/bin/pod deintegrate \;
+# Install gems
+gem install bundler
+gem install cocoapods
+
+# Update pod source
+pod repo update
 
 # Find and update each Gemfile.lock
 find . -iname Gemfile.lock -execdir bundle update \;
+
+# Install and uninstall pods for each Podfile to update Podfile.lock
+find . -iname Podfile -execdir pod update --no-repo-update \; -execdir pod deintegrate \;
 
 # If there were any changes, test them and then push and send a PR.
 set +e
