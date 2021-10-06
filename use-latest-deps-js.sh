@@ -19,9 +19,10 @@ print_usage () {
   (>&2 echo "This is typically used to update JS dependencies included using an importScripts call in a ServiceWorker.")
   (>&2 echo "This script ignores the node_modules folder.")
   (>&2 echo "Usage:")
-  (>&2 echo "    $0 [-d] regex new_string github-user/repository-name")
+  (>&2 echo "    $0 [-d] [-i pattern] regex new_string github-user/repository-name")
   (>&2 echo "Arguments:")
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
+  (>&2 echo "    -i: Only include files whose path match the given pattern.")
   (>&2 echo "    regex: Regex matching the original strings to replace.")
   (>&2 echo "    string: New string to replace the originals with.")
   (>&2 echo "Example:")
@@ -32,11 +33,15 @@ print_usage () {
 # Check for optional arguments.
 DRYRUN=0
 
-while getopts :d opt; do
+while getopts :i:d opt; do
   case $opt in
     d)
       (>&2 echo "Entered dry-run mode.")
       DRYRUN=1
+      ;;
+    i)
+      FILE_INCLUDE_PATTERN=${OPTARG}
+      (>&2 echo "Matching files in path $FILE_INCLUDE_PATTERN")
       ;;
     \?)
       (>&2 echo "Got invalid option -$OPTARG.")
@@ -79,7 +84,12 @@ set -x
 set -e
 
 # Find all js files that are NOT in "node_modules/".
-files=$(find . -name "*.js" -not -path "*node_modules/*")
+files=0
+if [[ "$FILE_INCLUDE_PATTERN" == 0 ]]; then
+  files=$(find . -name "*.html")
+else
+  files=$(find . -name "*.html" -path "$FILE_INCLUDE_PATTERN")
+fi
 
 # Replace strings in all js files.
 for file in $files; do

@@ -16,17 +16,19 @@
 
 print_usage () {
   (>&2 echo "Usage:")
-  (>&2 echo "    $0 [-d] [-p regex] github-user/repository-name")
+  (>&2 echo "    $0 [-d] [-p regex] [-i pattern] github-user/repository-name")
   (>&2 echo "Arguments:")
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
   (>&2 echo "    -p: Only update Node packages that match the given regex")
+  (>&2 echo "    -i: Only include files whose path match the given pattern.")
 }
 
 # Check for optional arguments.
 DRYRUN=0
 REGEX=0
+FILE_INCLUDE_PATTERN=0
 
-while getopts p:d opt; do
+while getopts p:i:d opt; do
   case $opt in
     d)
       (>&2 echo "Entered dry-run mode.")
@@ -35,6 +37,10 @@ while getopts p:d opt; do
     p)
       (>&2 echo "Limiting updating dependencies matching the regex $OPTARG.")
       REGEX=$OPTARG
+      ;;
+    i)
+      FILE_INCLUDE_PATTERN=${OPTARG}
+      (>&2 echo "Matching files in path $FILE_INCLUDE_PATTERN")
       ;;
     \?)
       (>&2 echo "Got invalid option -$OPTARG.")
@@ -99,6 +105,12 @@ npm --prefix ../ install yarn@1.22.10
 
 # Find all package.json files.
 files=$(find . -name "package.json" -not -path "**/node_modules/*")
+files=0
+if [[ "$FILE_INCLUDE_PATTERN" == 0 ]]; then
+  files=$(find . -name "package.json" -not -path "**/node_modules/*")
+else
+  files=$(find . -name "package.json" -path "$FILE_INCLUDE_PATTERN" -not -path "**/node_modules/*")
+fi
 
 # Update dependencies in all package.json files.
 for file in $files; do
