@@ -86,9 +86,9 @@ set -e
 # Find all js files that are NOT in "node_modules/".
 files=0
 if [[ "$FILE_INCLUDE_PATTERN" == 0 ]]; then
-  files=$(find . -name "*.html")
+  files=$(find . -name "*.js")
 else
-  files=$(find . -name "*.html" -path "$FILE_INCLUDE_PATTERN")
+  files=$(find . -name "*.js" -path "$FILE_INCLUDE_PATTERN")
 fi
 
 # Replace strings in all js files.
