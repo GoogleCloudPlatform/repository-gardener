@@ -46,7 +46,6 @@ if [ -z ${DPEBOT_FILE_INCLUDE_PATTERN+x} ]; then
   )
 else
   (
-  cd repo-to-update
   # Updating local/firebase hosing served Firebase SDK dependencies.
   ../use-latest-deps-html.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
   ../use-latest-deps-js.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
