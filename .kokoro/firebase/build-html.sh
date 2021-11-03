@@ -32,14 +32,28 @@ FIREBASE_SDK_VER=$(npm view firebase --json | jq -r '.["dist-tags"].latest')
 # Get latest version of FirebaseUI on NPM
 FIREBASEUI_VER=$(npm view firebaseui --json | jq -r '.["dist-tags"].latest')
 
-(
 cd repo-to-update
-# Updating local/firebase hosing served Firebase SDK dependencies.
-../use-latest-deps-html.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
-../use-latest-deps-js.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
-# Updating CDN Firebase SDK dependencies.
-../use-latest-deps-html.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
-../use-latest-deps-js.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
-# Updating CDN FirebaseUI dependencies.
-../use-latest-deps-html.sh "firebaseui/[0-9]*\.[0-9]*\.[0-9]*/" "firebaseui/${FIREBASEUI_VER}/" "${DPEBOT_REPO}"
-)
+if [ -z ${DPEBOT_FILE_INCLUDE_PATTERN+x} ]; then
+  (
+  # Updating local/firebase hosing served Firebase SDK dependencies.
+  ../use-latest-deps-html.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  ../use-latest-deps-js.sh "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  # Updating CDN Firebase SDK dependencies.
+  ../use-latest-deps-html.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  ../use-latest-deps-js.sh "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  # Updating CDN FirebaseUI dependencies.
+  ../use-latest-deps-html.sh "firebaseui/[0-9]*\.[0-9]*\.[0-9]*/" "firebaseui/${FIREBASEUI_VER}/" "${DPEBOT_REPO}"
+  )
+else
+  (
+  # Updating local/firebase hosing served Firebase SDK dependencies.
+  ../use-latest-deps-html.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  ../use-latest-deps-js.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebase/[0-9]*\.[0-9]*\.[0-9]*/" "firebase/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  # Updating CDN Firebase SDK dependencies.
+  ../use-latest-deps-html.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  ../use-latest-deps-js.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebasejs/[0-9]*\.[0-9]*\.[0-9]*/" "firebasejs/${FIREBASE_SDK_VER}/" "${DPEBOT_REPO}"
+  # Updating CDN FirebaseUI dependencies.
+  ../use-latest-deps-html.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "firebaseui/[0-9]*\.[0-9]*\.[0-9]*/" "firebaseui/${FIREBASEUI_VER}/" "${DPEBOT_REPO}"
+  )
+fi
+
