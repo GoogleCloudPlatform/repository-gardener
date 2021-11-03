@@ -104,7 +104,6 @@ npm --prefix ../ install npm-check-updates@2.15.0
 npm --prefix ../ install yarn@1.22.10
 
 # Find all package.json files.
-files=$(find . -name "package.json" -not -path "**/node_modules/*")
 files=0
 if [[ "$FILE_INCLUDE_PATTERN" == 0 ]]; then
   files=$(find . -name "package.json" -not -path "**/node_modules/*")
