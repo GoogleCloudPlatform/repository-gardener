@@ -19,8 +19,9 @@ print_usage () {
   (>&2 echo "    $0 [-d] [-p regex] [-i pattern] github-user/repository-name")
   (>&2 echo "Arguments:")
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
-  (>&2 echo "    -p: Only update Node packages that match the given regex")
-  (>&2 echo "    -i: Only include files whose path match the given pattern.")
+  (>&2 echo "    -p: Only update Node packages that match the given regex.")
+  # File pattern documentation: https://www.gnu.org/software/findutils/manual/html_node/find_html/Shell-Pattern-Matching.html
+  (>&2 echo "    -i: Only include package.json files whose paths match the given pattern.")
 }
 
 # Check for optional arguments.

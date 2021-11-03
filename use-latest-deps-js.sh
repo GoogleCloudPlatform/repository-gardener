@@ -22,7 +22,8 @@ print_usage () {
   (>&2 echo "    $0 [-d] [-i pattern] regex new_string github-user/repository-name")
   (>&2 echo "Arguments:")
   (>&2 echo "    -d: do a dry-run. Don't push or send a PR.")
-  (>&2 echo "    -i: Only include files whose path match the given pattern.")
+  # File pattern documentation: https://www.gnu.org/software/findutils/manual/html_node/find_html/Shell-Pattern-Matching.html
+  (>&2 echo "    -i: Only include .js files whose paths match the given pattern.")
   (>&2 echo "    regex: Regex matching the original strings to replace.")
   (>&2 echo "    string: New string to replace the originals with.")
   (>&2 echo "Example:")
