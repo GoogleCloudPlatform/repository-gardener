@@ -75,8 +75,6 @@ update_dependencies () {
 export JAVA_HOME=${KOKORO_GFILE_DIR}
 export PATH="$JAVA_HOME/bin:$PATH"
 
-$JAVA_HOME/bin/javac -version
-
 # Check for optional arguments.
 DRYRUN=0
 while getopts :d opt; do
