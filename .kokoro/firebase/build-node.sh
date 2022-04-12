@@ -27,10 +27,12 @@ if [ -z ${DPEBOT_NODE_REGEX+x} ]; then
     ../use-latest-deps-node.sh "${DPEBOT_REPO}"
   else
     ../use-latest-deps-node.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" "${DPEBOT_REPO}"
+  fi
 else
   if [ -z ${DPEBOT_FILE_INCLUDE_PATTERN+x} ]; then
     ../use-latest-deps-node.sh -p "${DPEBOT_NODE_REGEX}" "${DPEBOT_REPO}"
   else
     ../use-latest-deps-node.sh -i "$DPEBOT_FILE_INCLUDE_PATTERN" -p "${DPEBOT_NODE_REGEX}" "${DPEBOT_REPO}"
+  fi
 fi
 )
