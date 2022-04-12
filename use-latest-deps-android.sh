@@ -71,6 +71,10 @@ update_dependencies () {
   fi
 }
 
+# Use the version of Java specified in the build config
+export JAVA_HOME=${KOKORO_GFILE_DIR}
+export PATH="$JAVA_HOME/bin:$PATH"
+
 # Check for optional arguments.
 DRYRUN=0
 while getopts :d opt; do
