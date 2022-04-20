@@ -71,11 +71,11 @@ rvm use 2.6.0
 gem install bundler
 gem install cocoapods
 
-# Update pod source
-pod repo update
-
 # Find and update each Gemfile.lock
 find . -iname Gemfile.lock -execdir bundle update \;
+
+# Update pod source
+pod repo update
 
 # Install and uninstall pods for each Podfile to update Podfile.lock
 find . -iname Podfile -execdir pod update --no-repo-update \; -execdir pod deintegrate \;
