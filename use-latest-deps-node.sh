@@ -100,7 +100,7 @@ node --version
 #  * npm-check-updates: provides the `ncu` tool
 # Tools installed in the parent directory to avoid polluting the repo's 
 # package.json file.
-sudo npm install -g npm@6.14.11
+sudo npm -E install -g npm@6.14.11
 npm --prefix ../ install npm-check-updates@2.15.0
 npm --prefix ../ install yarn@1.22.10
 
