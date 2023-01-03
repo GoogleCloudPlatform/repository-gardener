@@ -57,12 +57,15 @@ REPO=$1
 # http://stackoverflow.com/a/246128/101923
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+## Install Flutter
+git clone https://github.com/flutter/flutter.git --depth 1 -b stable "${DIR}/_flutter"
+echo "${DIR}/_flutter/bin" >> $PATH
+
 set -e
 set -x
 
 # Find and update each pubspec.yml
 find . -iname pubspec.yaml -execdir flutter pub upgrade \;
-
 
 # If there were any changes, test them and then push and send a PR.
 set +e
