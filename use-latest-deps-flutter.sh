@@ -59,7 +59,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ## Install Flutter
 git clone https://github.com/flutter/flutter.git --depth 1 -b stable "${DIR}/_flutter"
-echo "${DIR}/_flutter/bin" >> "${PATH}"
+PATH="${PATH}:${DIR}/_flutter/bin"
 
 set -e
 set -x
