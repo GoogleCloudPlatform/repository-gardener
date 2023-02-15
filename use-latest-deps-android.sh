@@ -54,12 +54,12 @@ update_dependencies () {
     dir=$1
 
     # Activate a virtualenv
-    virtualenv --python python2.7 env
+    virtualenv --python python3.8 env
     # shellcheck disable=SC1091
     source env/bin/activate
 
     # Run Android fixer script
-    python "${dir}/fix_android_dependencies.py"
+    python3 "${dir}/fix_android_dependencies.py"
 
     # Remove the virtualenv
     rm -rf env

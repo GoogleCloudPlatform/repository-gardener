@@ -32,9 +32,9 @@ def get_android_replacements():
     """Gets a dictionary of all android-specific replacements to be made."""
     replacements = {}
 
-    compileSdk = 'compileSdkVersion {}'.format(COMPILE_SDK_VERSION)
-    targetSdk = 'targetSdkVersion {}'.format(TARGET_SDK_VERSION)
-    buildToolsVersion = 'buildToolsVersion \'{}\''.format(BUILD_TOOLS_VERSION)
+    compileSdk = f"compileSdkVersion {COMPILE_SDK_VERSION}"
+    targetSdk = f"targetSdkVersion {TARGET_SDK_VERSION}"
+    buildToolsVersion = f"buildToolsVersion \'{BUILD_TOOLS_VERSION}\'"
 
     replacements[COMPILE_SDK_RE] = compileSdk
     replacements[TARGET_SDK_RE] = targetSdk
@@ -63,8 +63,8 @@ def get_dep_replacements(json_file):
             curr_version = dep['version']
             new_version = dep['available']['release']
 
-            curr_dep = '{}:{}:{}'.format(group, name, curr_version)
-            new_dep = '{}:{}:{}'.format(group, name, new_version)
+            curr_dep = f"{group}:{name}:{curr_version}"
+            new_dep = f"{group}:{name}:{new_version}"
             replacements[curr_dep] = new_dep
 
     return replacements
@@ -76,19 +76,19 @@ def update_project(project_path):
     replacements.update(get_dep_replacements(project_path))
 
     # Print all updates found
-    print 'Dependency updates:'
-    for (k, v) in replacements.iteritems():
-        print '{} --> {}'.format(k, v)
+    print ("Dependency updates:")
+    for (k, v) in iter(replacements.items()):
+        print (f"{k} --> {v}")
 
     # Iterate through each file and replace it
     for gradle_file in find_gradle_files():
-        print 'Updating dependencies for: {}'.format(gradle_file)
+        print (f"Updating dependencies for: {gradle_file}")
 
         new_data = ''
         with open(gradle_file, 'r') as f:
             # Perform each replacement
             new_data = f.read()
-            for (k, v) in replacements.iteritems():
+            for (k, v) in iter(replacements.items()):
                 new_data = re.sub(k, v, new_data)
 
         # Write the file
@@ -99,27 +99,27 @@ def update_all():
     """Runs through all build.gradle files and performs replacements."""
 
     project_root = os.getcwd()
-    print 'Repo root: {}'.format(project_root)
+    print (f"Repo root: {project_root}")
 
     top_level_report = os.path.join(project_root, RELATIVE_PATH_TO_JSON_REPORT)
 
     if os.path.exists(top_level_report):
-        print 'Update dependencies via top-level report'
+        print ("Update dependencies via top-level report")
         update_project(top_level_report)
     else:
-        print 'Update dependencies via child-level report(s)'
+        print ("Update dependencies via child-level report(s)")
         first_level_subdirectories = get_immediate_subdirectories(project_root)
-        print 'List of subdirectories: {}'.format(first_level_subdirectories)
+        print (f"List of subdirectories: {first_level_subdirectories}")
 
         for subdirectory in first_level_subdirectories:
-            print 'subdirectory: {}'.format(subdirectory)
+            print (f"subdirectory: {subdirectory}")
             subdirectory_report = os.path.join(project_root, subdirectory, RELATIVE_PATH_TO_JSON_REPORT)
 
             if os.path.exists(subdirectory_report):
-                print '\tUpdate dependencies in subdirectory'
+                print ("\tUpdate dependencies in subdirectory")
                 update_project(subdirectory_report)
             else:
-                print '\tNo report in subdirectory'
+                print ("\tNo report in subdirectory")
 
 def get_immediate_subdirectories(directory):
     return [name for name in os.listdir(directory)
