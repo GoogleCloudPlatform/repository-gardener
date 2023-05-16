@@ -34,7 +34,7 @@ def get_android_replacements():
 
     compileSdk = f"compileSdk = {COMPILE_SDK_VERSION}"
     targetSdk = f"targetSdk = {TARGET_SDK_VERSION}"
-    buildToolsVersion = f"buildTools = \"{BUILD_TOOLS_VERSION}\""
+    buildToolsVersion = f"buildToolsVersion = \"{BUILD_TOOLS_VERSION}\""
 
     replacements[COMPILE_SDK_RE] = compileSdk
     replacements[TARGET_SDK_RE] = targetSdk
