@@ -8,9 +8,9 @@ COMPILE_SDK_VERSION = 33
 TARGET_SDK_VERSION = 33
 BUILD_TOOLS_VERSION = '30.0.2'
 
-COMPILE_SDK_RE = r'compileSdkVersion[\s][\w]+'
-TARGET_SDK_RE = r'targetSdkVersion[\s][\w]+'
-BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"\w\.]+'
+COMPILE_SDK_RE = r'compileSdk(?:Version)[\s][\w]+'
+TARGET_SDK_RE = r'targetSdk(?:Version)[\s][\w]+'
+BUILD_TOOLS_RE = r'buildTools(?:Version)[\s][\'\"\w\.]+'
 
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
 #
@@ -19,11 +19,11 @@ BUILD_TOOLS_RE = r'buildToolsVersion[\s][\'\"\w\.]+'
 RELATIVE_PATH_TO_JSON_REPORT = 'build/dependencyUpdates/report.json'
 
 def find_gradle_files():
-    """Finds all build.gradle files, recursively."""
+    """Finds all build.gradle(.kts) files, recursively."""
     gradle_files = []
     for root, dirs, files in os.walk('.'):
         for filename in files:
-            if filename.endswith('build.gradle'):
+            if filename.endswith(('build.gradle', 'build.gradle.kts')):
                 gradle_files.append(os.path.join(root, filename))
 
     return gradle_files
@@ -32,9 +32,9 @@ def get_android_replacements():
     """Gets a dictionary of all android-specific replacements to be made."""
     replacements = {}
 
-    compileSdk = f"compileSdkVersion {COMPILE_SDK_VERSION}"
-    targetSdk = f"targetSdkVersion {TARGET_SDK_VERSION}"
-    buildToolsVersion = f"buildToolsVersion \'{BUILD_TOOLS_VERSION}\'"
+    compileSdk = f"compileSdk = {COMPILE_SDK_VERSION}"
+    targetSdk = f"targetSdk = {TARGET_SDK_VERSION}"
+    buildToolsVersion = f"buildToolsVersion = \"{BUILD_TOOLS_VERSION}\""
 
     replacements[COMPILE_SDK_RE] = compileSdk
     replacements[TARGET_SDK_RE] = targetSdk
@@ -63,14 +63,20 @@ def get_dep_replacements(json_file):
             curr_version = dep['version']
             new_version = dep['available']['release']
 
+            # For dependencies and classhpaths
             curr_dep = f"{group}:{name}:{curr_version}"
             new_dep = f"{group}:{name}:{new_version}"
             replacements[curr_dep] = new_dep
 
+            # For the plugins block
+            curr_plugin = f'\("{group}"\) version "{curr_version}"'
+            new_plugin = f'("{group}") version "{new_version}"'
+            replacements[curr_plugin] = new_plugin
+
     return replacements
 
 def update_project(project_path):
-    """Runs through all build.gradle files and performs replacements for individual android project."""
+    """Runs through all build.gradle(.kts) files and performs replacements for individual android project."""
     replacements = {}
     replacements.update(get_android_replacements())
     replacements.update(get_dep_replacements(project_path))
