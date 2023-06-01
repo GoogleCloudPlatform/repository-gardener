@@ -3,6 +3,9 @@
 
 set -eo pipefail
 
+# Needed for ruby gem installation.
+update-ca-certificates
+
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
 # Kokoro should set the following environment variables.
