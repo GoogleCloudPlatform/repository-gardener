@@ -4,8 +4,8 @@
 set -eo pipefail
 
 # Needed for ruby gem installation.
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get update -y
+sudo apt-get upgrade -y
 
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
