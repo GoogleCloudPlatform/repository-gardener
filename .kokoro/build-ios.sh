@@ -3,12 +3,6 @@
 
 set -eo pipefail
 
-# Needed for ruby gem installation.
-sudo apt-get -y update
-sudo apt-get -y upgrade
-sudo apt-get install -y ca-certificates
-sudo update-ca-certificates
-
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
 # Kokoro should set the following environment variables.
@@ -25,6 +19,15 @@ if [ -z ${DPEBOT_BRANCH+x} ]; then
 else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
+
+# Needed for ruby gem installation.
+# See: 
+# - https://bundler.io/guides/rubygems_tls_ssl_troubleshooting_guide.html#updating-ca-certificates
+# - https://github.com/rubygems/rubygems/issues/2241#issuecomment-374778138
+wget "https://raw.githubusercontent.com/rubygems/rubygems/master/lib/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA_R3.pem"
+sudo apt-get install -y ca-certificates
+sudo cp GlobalSignRootCA_R3.pem /usr/local/share/ca-certificates
+sudo update-ca-certificates
 
 (
 cd repo-to-update
