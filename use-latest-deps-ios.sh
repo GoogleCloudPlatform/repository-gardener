@@ -64,8 +64,8 @@ set -o pipefail
 # Install Ruby
 # shellcheck disable=SC1091
 source /etc/profile.d/rvm.sh
-rvm install 2.6.0
-rvm use 2.6.0
+rvm install 2.7.0
+rvm use 2.7.0
 
 # Install gems
 gem install bundler
