@@ -3,6 +3,12 @@
 
 set -eo pipefail
 
+# Needed for ruby gem installation.
+sudo apt-get -y update
+sudo apt-get -y upgrade
+sudo apt-get install -y ca-certificates
+sudo update-ca-certificates
+
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
 # Kokoro should set the following environment variables.
@@ -19,10 +25,6 @@ if [ -z ${DPEBOT_BRANCH+x} ]; then
 else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
-
-# Needed for ruby gem installation.
-sudo apt-get update -y
-sudo apt-get upgrade -y
 
 (
 cd repo-to-update
