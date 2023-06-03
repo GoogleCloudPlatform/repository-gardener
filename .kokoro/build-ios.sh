@@ -20,15 +20,6 @@ else
   ./clone-and-checkout.sh -b "${DPEBOT_BRANCH}" "${DPEBOT_REPO}"
 fi
 
-# Needed for ruby gem installation.
-# See: 
-# - https://bundler.io/guides/rubygems_tls_ssl_troubleshooting_guide.html#updating-ca-certificates
-# - https://github.com/rubygems/rubygems/issues/2241#issuecomment-374778138
-wget "https://raw.githubusercontent.com/rubygems/rubygems/master/lib/rubygems/ssl_certs/rubygems.org/GlobalSignRootCA_R3.pem"
-sudo apt-get install -y ca-certificates
-sudo cp GlobalSignRootCA_R3.pem /usr/local/share/ca-certificates
-sudo update-ca-certificates
-
 (
 cd repo-to-update
 ../use-latest-deps-ios.sh "${DPEBOT_REPO}"
