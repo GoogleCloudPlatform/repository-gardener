@@ -71,11 +71,14 @@ rvm use 2.7.5
 gem install bundler
 gem install cocoapods
 
+# Allow root
+export COCOAPODS_ALLOW_ROOT=1
+
 # Find and update each Gemfile.lock
 find . -iname Gemfile.lock -execdir bundle update \;
 
 # Update pod source
-sudo -u kokoro pod repo update
+pod repo update
 
 # Install and uninstall pods for each Podfile to update Podfile.lock
 find . -iname Podfile -execdir pod update --no-repo-update \; -execdir pod deintegrate \;
