@@ -2,7 +2,6 @@
 # Build script for repositories with iOS Cocoapods dependencies.
 
 set -eo pipefail
-whoami
 
 cd ${KOKORO_ARTIFACTS_DIR}/github/repository-gardener
 
