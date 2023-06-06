@@ -64,8 +64,8 @@ set -o pipefail
 # Install Ruby
 # shellcheck disable=SC1091
 source /etc/profile.d/rvm.sh
-rvm install 2.7.0
-rvm use 2.7.0
+rvm install 2.7.5
+rvm use 2.7.5
 
 # Install gems
 gem install bundler
@@ -75,7 +75,7 @@ gem install cocoapods
 find . -iname Gemfile.lock -execdir bundle update \;
 
 # Update pod source
-pod repo update
+sudo -u kokoro pod repo update
 
 # Install and uninstall pods for each Podfile to update Podfile.lock
 find . -iname Podfile -execdir pod update --no-repo-update \; -execdir pod deintegrate \;
