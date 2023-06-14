@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# CocoaPods requires terminal to be using UTF-8 encoding.
+export LANG=en_US.UTF-8
+
 print_usage () {
   (>&2 echo "Usage:")
   (>&2 echo "    $0 [-d] github-user/repository-name")
