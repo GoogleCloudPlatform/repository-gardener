@@ -15,9 +15,9 @@
 # limitations under the License.
 
 # CocoaPods requires terminal to be using UTF-8 encoding.
-export LANG=en_US.UTF-8
-export LANGUAGE=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+sudo apt install -q -y locales
+sudo locale-gen en_US.UTF-8
+sudo update-locale en_US.UTF-8
 
 print_usage () {
   (>&2 echo "Usage:")
