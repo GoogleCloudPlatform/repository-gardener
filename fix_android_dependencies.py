@@ -8,9 +8,9 @@ COMPILE_SDK_VERSION = 34
 TARGET_SDK_VERSION = 34
 BUILD_TOOLS_VERSION = '34.0.0'
 
-COMPILE_SDK_RE = r'compileSdk(?:Version)[\s][\w]+'
-TARGET_SDK_RE = r'targetSdk(?:Version)[\s][\w]+'
-BUILD_TOOLS_RE = r'buildTools(?:Version)[\s][\'\"\w\.]+'
+COMPILE_SDK_RE = r'compileSdk(?:Version)?\s*=?\s*[\w]+'
+TARGET_SDK_RE = r'targetSdk(?:Version)?\s*=?\s*[\w]+'
+BUILD_TOOLS_RE = r'buildTools(?:Version)?\s*=?\s*[\'\"\w\.]+'
 
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
 #
