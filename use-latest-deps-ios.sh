@@ -73,7 +73,7 @@ rvm install 2.7.5
 rvm use 2.7.5
 
 # Install gems
-gem install bundler
+gem install bundler -v 2.4.22 # subsequent versions require Ruby 3+.
 gem install cocoapods
 
 # Allow root
