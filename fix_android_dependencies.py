@@ -80,7 +80,7 @@ def get_dep_replacements(json_file, toml_deps):
             replacements[curr_dep] = new_dep
 
             # For the plugins block in .kts files
-            curr_plugin = f'("{group}") version "{curr_version}"'
+            curr_plugin = f'\("{group}"\) version "{curr_version}"'
             new_plugin = f'("{group}") version "{new_version}"'
             replacements[curr_plugin] = new_plugin
 
