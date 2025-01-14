@@ -66,15 +66,8 @@ set -e
 set -x
 set -o pipefail
 
-# Install Ruby
-# shellcheck disable=SC1091
-source /etc/profile.d/rvm.sh
-rvm install 2.7.5
-rvm use 2.7.5
-
 # Install gems
-gem install bundler -v 2.4.22 # subsequent versions require Ruby 3+.
-gem install cocoapods
+gem install bundler -v 2.4.22
 
 # Allow root
 export COCOAPODS_ALLOW_ROOT=1
