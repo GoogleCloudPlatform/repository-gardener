@@ -4,9 +4,9 @@ import re
 
 # These will have to be updated manually over time, there's not an
 # easy way to determine the latest version.
-COMPILE_SDK_VERSION = 35
-TARGET_SDK_VERSION = 35
-BUILD_TOOLS_VERSION = '35.0.0'
+COMPILE_SDK_VERSION = 36
+TARGET_SDK_VERSION = 36
+BUILD_TOOLS_VERSION = '36.0.0'
 
 # build.gradle(.kts) files
 COMPILE_SDK_RE = r'compileSdk(?:Version)?\s*=?\s*[\w]+'
