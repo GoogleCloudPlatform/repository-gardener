@@ -32,7 +32,10 @@ generate_dependencies_report () {
     pushd "$dir"
 
     # Generate JSON dependencies report
-    ./gradlew dependencyUpdates -Drevision=release -DoutputFormatter=json
+    # TODO: ben-manes/gradle-versions-plugin#948 - Remove '--no-parallel' once this issue
+    #   has been resolved: https://github.com/ben-manes/gradle-versions-plugin/issues/948
+    #   (This is a workaround for Gradle 9.x.x)
+    ./gradlew dependencyUpdates --no-parallel -Drevision=release -DoutputFormatter=json
 
     gradle_exit_code="$?"
 
