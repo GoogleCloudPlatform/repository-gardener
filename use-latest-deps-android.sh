@@ -62,12 +62,15 @@ update_dependencies () {
     source env/bin/activate
 
     # Run Android fixer script
+    set +e
     python3 "${dir}/fix_android_dependencies.py"
+    python_exit_code="$?"
+    set -e
 
     # Remove the virtualenv
     rm -rf env
 
-    return 0
+    return $python_exit_code
   else
     # Return invalid arguments exit code.
     return 128
@@ -133,7 +136,13 @@ if [ $generate_dependencies_report_exit_code -eq 127 ]; then
   for child_dir in "${child_dirs[@]}"
     do
       generate_dependencies_report "${DIR}/${child_dir}"
+      child_exit_code="$?"
+      if [ $child_exit_code -ne 0 ] && [ $child_exit_code -ne 127 ]; then
+        exit $child_exit_code
+      fi
     done
+elif [ $generate_dependencies_report_exit_code -ne 0 ]; then
+  exit $generate_dependencies_report_exit_code
 fi
 
 set -e
