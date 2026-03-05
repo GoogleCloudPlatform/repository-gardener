@@ -65,7 +65,7 @@ set -e
 set -x
 
 # Find and update each pubspec.yml
-find . -iname pubspec.yaml -execdir flutter pub upgrade \;
+find . -iname pubspec.yaml -execdir flutter pub upgrade --major-versions --tighten \;
 
 # If there were any changes, test them and then push and send a PR.
 set +e
