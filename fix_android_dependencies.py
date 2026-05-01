@@ -17,6 +17,9 @@ BUILD_TOOLS_RE = r'buildTools(?:Version)?\s*=?\s*[\'\"\w\.]+'
 VERSION_RE = r'(.*)\s*=\s*"(.*)"'
 DEPENDENCY_RE = r'([\w\.]+)\s*='
 
+# gradle-wrapper.properties files
+GRADLE_WRAPPER_RE = r'distributionUrl\s*=\s*.*'
+
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
 #
 # Must run this command:
@@ -31,7 +34,7 @@ def find_configuration_files():
     gradle_files = []
     for root, dirs, files in os.walk('.'):
         for filename in files:
-            if filename.endswith(('build.gradle', 'build.gradle.kts', 'versions.toml')):
+            if filename.endswith(('build.gradle', 'build.gradle.kts', 'versions.toml', 'gradle-wrapper.properties')):
                 gradle_files.append(os.path.join(root, filename))
 
     return gradle_files
@@ -80,7 +83,7 @@ def get_dep_replacements(json_file, toml_deps):
             replacements[curr_dep] = new_dep
 
             # For the plugins block in .kts files
-            curr_plugin = f'\("{group}"\) version "{curr_version}"'
+            curr_plugin = rf'\("{group}"\) version "{curr_version}"'
             new_plugin = f'("{group}") version "{new_version}"'
             replacements[curr_plugin] = new_plugin
 
@@ -97,6 +100,24 @@ def get_dep_replacements(json_file, toml_deps):
     return replacements
 
 
+def get_gradle_replacements(json_file):
+    """Gets a dictionary of all gradle replacements to be made."""
+    replacements = {}
+    with open(json_file, 'r') as f:
+        json_data = json.loads(f.read())
+
+        if 'gradle' in json_data:
+            gradle_info = json_data['gradle']
+            # Always use 'current'
+            version = gradle_info.get('current', {}).get('version')
+            if version:
+                # Construct the distribution URL using -bin.zip
+                new_url = f'https\\://services.gradle.org/distributions/gradle-{version}-bin.zip'
+                replacements[GRADLE_WRAPPER_RE] = f'distributionUrl={new_url}'
+
+    return replacements
+
+
 def update_project(project_path, toml_path):
     """Runs through all build configuration files and performs replacements for individual android project."""
     replacements = {}
@@ -104,6 +125,7 @@ def update_project(project_path, toml_path):
     # Open the Gradle Version Catalog file and fetch its dependencies
     toml_dependencies = get_toml_dependencies(toml_path)
     replacements.update(get_dep_replacements(project_path, toml_dependencies))
+    replacements.update(get_gradle_replacements(project_path))
 
     # Print all updates found
     print("Dependency updates:")
