@@ -15,7 +15,7 @@ BUILD_TOOLS_RE = r'buildTools(?:Version)?\s*=?\s*[\'\"\w\.]+'
 
 # *.versions.toml files
 VERSION_RE = r'(.*)\s*=\s*"(.*)"'
-DEPENDENCY_RE = r'(group|module|name|version|version.ref|id)\s*='
+DEPENDENCY_RE = r'([\w\.]+)\s*='
 
 # Depends on https://github.com/ben-manes/gradle-versions-plugin
 #
@@ -160,19 +160,45 @@ def get_toml_dependency(line, versions):
     # skip dependencies that don't specify a version
     if 'version' not in line:
         return {}
+
     # Turn it into a valid JSON
-    line = re.sub(DEPENDENCY_RE, r'"\1" =', line)
-    value = line.split("=", 1)[1].replace("=", ":")
-    dep_json = json.loads(value)
+    # Split the TOML assignment (e.g., name = { ... })
+    if '=' not in line:
+        return {}
+    parts = line.split("=", 1)
+    value_part = parts[1].strip()
+
+    if not value_part.startswith('{'):
+        return {}
+
+    # 1. Quote keys and replace '=' with ':'
+    # This regex matches words (optionally with dots) followed by '='
+    json_str = re.sub(DEPENDENCY_RE, r'"\1":', value_part)
+    # 2. Handle trailing commas (JSON doesn't like them)
+    json_str = re.sub(r',\s*}', '}', json_str)
+
+    try:
+        dep_json = json.loads(json_str)
+    except json.JSONDecodeError:
+        return {}
+
     # unspecified version means it's an internal dependency
     # we can skip version bumps for those
     if 'version' in dep_json and dep_json['version'] == 'unspecified':
         return {}
+
+    # Handle version as a dict: version = { ref = "..." }
+    if 'version' in dep_json and isinstance(dep_json['version'], dict):
+        v_dict = dep_json.pop('version')
+        if 'ref' in v_dict:
+            dep_json['version.ref'] = v_dict['ref']
+
     # Fill in the group and name
     if 'module' in dep_json:
         module = dep_json.pop('module')
-        [group, name] = module.split(':')
-        dep_json.update({'group': group, 'name': name})
+        if ':' in module:
+            [group, name] = module.split(':', 1)
+            dep_json.update({'group': group, 'name': name})
     if 'id' in dep_json:
         # 'id' indicates this is a plugin
         dep_json['group'] = dep_json.pop('id')
@@ -180,10 +206,16 @@ def get_toml_dependency(line, versions):
 
     # Fill in the current version
     if 'version.ref' in dep_json:
-        dep_json['original_line'] = versions[dep_json.pop('version.ref')]['original_line']
+        ref_key = dep_json.pop('version.ref')
+        if ref_key in versions:
+            dep_json['original_line'] = versions[ref_key]['original_line']
     # if the version is inlined
-    if 'version' in dep_json:
+    if 'version' in dep_json and 'original_line' not in dep_json:
         dep_json['original_line'] = original_line
+
+    if 'group' not in dep_json or 'name' not in dep_json:
+        return {}
+
     key = dep_json.pop('group') + ':' + dep_json.pop('name')
     return {key: dep_json}
 
