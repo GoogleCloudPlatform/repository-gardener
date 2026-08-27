@@ -8,10 +8,15 @@ COMPILE_SDK_VERSION = 37
 TARGET_SDK_VERSION = 37
 BUILD_TOOLS_VERSION = '37.0.0'
 
+# The minSdk required either by the Firebase Android SDK or androidx or GMSCore
+# Some repos might use a minSdk version higher than this and that's ok.
+MIN_SDK_VERSION = 24
+
 # build.gradle(.kts) files
 COMPILE_SDK_RE = r'compileSdk(?:Version)?\s*=?\s*[\w]+'
 TARGET_SDK_RE = r'targetSdk(?:Version)?\s*=?\s*[\w]+'
 BUILD_TOOLS_RE = r'buildTools(?:Version)?\s*=?\s*[\'\"\w\.]+'
+MIN_SDK_RE = r'minSdk(?:Version)?\s*=?\s*[\w]+'
 
 # *.versions.toml files
 VERSION_RE = r'(.*)\s*=\s*"(.*)"'
@@ -40,6 +45,17 @@ def find_configuration_files():
     return gradle_files
 
 
+def replace_min_sdk(match):
+    """Replaces minSdk only if MIN_SDK_VERSION is higher than current version."""
+    matched_text = match.group(0)
+    version_match = re.search(MIN_SDK_RE, matched_text)
+    if version_match and version_match.group(1).isdigit():
+        current_version = int(version_match.group(1))
+        if current_version < MIN_SDK_VERSION:
+            return f"minSdk = {MIN_SDK_VERSION}"
+    return matched_text
+
+
 def get_android_replacements():
     """Gets a dictionary of all android-specific replacements to be made."""
     replacements = {}
@@ -50,6 +66,7 @@ def get_android_replacements():
 
     replacements[COMPILE_SDK_RE] = compile_sdk
     replacements[TARGET_SDK_RE] = target_sdk
+    replacements[MIN_SDK_RE] = replace_min_sdk
     replacements[BUILD_TOOLS_RE] = build_tools_version
 
     return replacements
