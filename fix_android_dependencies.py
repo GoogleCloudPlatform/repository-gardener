@@ -48,9 +48,9 @@ def find_configuration_files():
 def replace_min_sdk(match):
     """Replaces minSdk only if MIN_SDK_VERSION is higher than current version."""
     matched_text = match.group(0)
-    version_match = re.search(MIN_SDK_RE, matched_text)
-    if version_match and version_match.group(1).isdigit():
-        current_version = int(version_match.group(1))
+    version_match = re.search(r'\d+', matched_text)
+    if version_match:
+        current_version = int(version_match.group(0))
         if current_version < MIN_SDK_VERSION:
             return f"minSdk = {MIN_SDK_VERSION}"
     return matched_text
