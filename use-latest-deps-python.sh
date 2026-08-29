@@ -66,7 +66,7 @@ set -x
 set -e
 
 pip install --upgrade nox
-nox -s check_requirements -- update
+nox -s check_requirements --noxfile nox.py -- update
 
 
 set +e
