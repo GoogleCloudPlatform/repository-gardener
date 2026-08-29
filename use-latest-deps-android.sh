@@ -54,7 +54,7 @@ update_dependencies () {
     dir=$1
 
     # Activate a virtualenv
-    virtualenv --python python3.8 env
+    virtualenv --python python3.14 env
     # shellcheck disable=SC1091
     source env/bin/activate
 
