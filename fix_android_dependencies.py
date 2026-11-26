@@ -4,8 +4,8 @@ import re
 
 # These will have to be updated manually over time, there's not an
 # easy way to determine the latest version.
-COMPILE_SDK_VERSION = 37
 TARGET_SDK_VERSION = 37
+COMPILE_SDK_VERSION = "37.1"
 BUILD_TOOLS_VERSION = '37.0.0'
 
 # The minSdk required either by the Firebase Android SDK or androidx or GMSCore
@@ -13,7 +13,11 @@ BUILD_TOOLS_VERSION = '37.0.0'
 MIN_SDK_VERSION = 24
 
 # build.gradle(.kts) files
-COMPILE_SDK_RE = r'compileSdk(?:Version)?\s*=?\s*[\w]+'
+COMPILE_SDK_RE = (
+    r'compileSdk\s*\{\s*version\s*=\s*release\(\d+\)'
+    r'(?:\s*\{\s*minorApiLevel\s*=\s*\d+\s*\})?\s*\}'
+    r'|compileSdk(?:Version)?(?:\s*=\s*|\s+)[\w]+'
+)
 TARGET_SDK_RE = r'targetSdk(?:Version)?\s*=?\s*[\w]+'
 BUILD_TOOLS_RE = r'buildTools(?:Version)?\s*=?\s*[\'\"\w\.]+'
 MIN_SDK_RE = r'minSdk(?:Version)?\s*=?\s*[\w]+'
@@ -56,15 +60,33 @@ def replace_min_sdk(match):
     return matched_text
 
 
+def replace_compile_sdk(match):
+    """Replaces compileSdk with the configured COMPILE_SDK_VERSION."""
+    line_start = match.string.rfind('\n', 0, match.start()) + 1
+    leading = match.string[line_start:match.start()]
+    indent = leading if not leading.strip() else '    '
+
+    version_str = str(COMPILE_SDK_VERSION)
+    if '.' in version_str:
+        major, minor = version_str.split('.', 1)
+        return (
+            f"compileSdk {{\n"
+            f"{indent}    version = release({major}) {{\n"
+            f"{indent}        minorApiLevel = {minor}\n"
+            f"{indent}    }}\n"
+            f"{indent}}}"
+        )
+    return f"compileSdk = {version_str}"
+
+
 def get_android_replacements():
     """Gets a dictionary of all android-specific replacements to be made."""
     replacements = {}
 
-    compile_sdk = f"compileSdk = {COMPILE_SDK_VERSION}"
     target_sdk = f"targetSdk = {TARGET_SDK_VERSION}"
     build_tools_version = f"buildToolsVersion = \"{BUILD_TOOLS_VERSION}\""
 
-    replacements[COMPILE_SDK_RE] = compile_sdk
+    replacements[COMPILE_SDK_RE] = replace_compile_sdk
     replacements[TARGET_SDK_RE] = target_sdk
     replacements[MIN_SDK_RE] = replace_min_sdk
     replacements[BUILD_TOOLS_RE] = build_tools_version
