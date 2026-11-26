@@ -60,20 +60,34 @@ def replace_min_sdk(match):
     return matched_text
 
 
+def detect_indent_step(text, line_start, indent):
+    """Infers one indentation level from the enclosing block above line_start."""
+    if not indent:
+        return '    '
+    for prev_line in reversed(text[:line_start].splitlines()):
+        if not prev_line.strip():
+            continue
+        prev_indent = prev_line[:len(prev_line) - len(prev_line.lstrip(' \t'))]
+        if len(prev_indent) < len(indent) and indent.startswith(prev_indent):
+            return indent[len(prev_indent):]
+    return indent
+
+
 def replace_compile_sdk(match):
     """Replaces compileSdk with the configured COMPILE_SDK_VERSION."""
     line_start = match.string.rfind('\n', 0, match.start()) + 1
     leading = match.string[line_start:match.start()]
     indent = leading if not leading.strip() else '    '
+    step = detect_indent_step(match.string, line_start, indent)
 
     version_str = str(COMPILE_SDK_VERSION)
     if '.' in version_str:
         major, minor = version_str.split('.', 1)
         return (
             f"compileSdk {{\n"
-            f"{indent}    version = release({major}) {{\n"
-            f"{indent}        minorApiLevel = {minor}\n"
-            f"{indent}    }}\n"
+            f"{indent}{step}version = release({major}) {{\n"
+            f"{indent}{step}{step}minorApiLevel = {minor}\n"
+            f"{indent}{step}}}\n"
             f"{indent}}}"
         )
     return f"compileSdk = {version_str}"
